@@ -8,7 +8,6 @@ const userRouter = require('./user');
 const itemRouter = require('./item');
 
 module.exports = function(app) {
-
     app.use(bodyParser.json());
 
     app.use('/api', authRouter);
