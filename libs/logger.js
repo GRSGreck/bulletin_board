@@ -13,7 +13,7 @@ module.exports = function(module) {
                     return date;
                 },
                 colorize: true,
-                level: process.env.NODE_ENV || 'development' ? 'debug' : 'error',
+                level: !process.env.NODE_ENV || process.env.NODE_ENV === 'development' ? 'debug' : 'error',
                 label: path
             })
         ]
