@@ -11,7 +11,7 @@ const mongoose = require('mongoose');
 
 const app = express();
 
-const db = mongoose.createConnection(process.env.DB_HOST, process.env.DB_NAME, process.env.DB_PORT, {
+mongoose.connect(process.env.DB_HOST, process.env.DB_NAME, process.env.DB_PORT, {
     user: process.env.DB_USER,
     password: process.env.DB_PASS,
     server: {
@@ -20,6 +20,8 @@ const db = mongoose.createConnection(process.env.DB_HOST, process.env.DB_NAME, p
         }
     }
 });
+
+const db = mongoose.connection;
 
 db.on('open', function() {
     logger.info(`Connecting to a database "${ process.env.DB_NAME }" was completed successfully on port: ${ process.env.DB_PORT }`);

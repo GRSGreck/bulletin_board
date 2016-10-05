@@ -1,11 +1,12 @@
 'use strict';
 
-const mongoose = require('mogoose');
+const mongoose = require('mongoose');
 
 const UserSchema = new mongoose.Schema({
     phone: {
         type: String,
-        required: true
+        required: true/*,
+        unique: true*/
     },
     name: {
         type: String,
@@ -14,8 +15,8 @@ const UserSchema = new mongoose.Schema({
     },
     email: {
         type: String,
-        required: true,
-        unique: true
+        required: true/*,
+        unique: true*/
     },
     password: {
         type: String,

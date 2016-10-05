@@ -8,8 +8,10 @@ const userRouter = require('./user');
 const itemRouter = require('./item');
 
 module.exports = function(app) {
+    app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json());
 
+    app.get('/', (req, res) => res.send(`Hello! The API is at http://localhost:${process.env.PORT}/api`));
     app.use('/api', authRouter);
     app.use('/api/me', meRouter);
     app.use('/api/user', userRouter);
@@ -24,8 +26,8 @@ module.exports = function(app) {
     // developer error handler
     if (!process.env.NODE_ENV || process.env.NODE_ENV ==='development') {
         return app.use(function(err, req, res, next) {
-            res.status(err.status || 500);
-            res.json([{
+            err.status = err.status || 500;
+            res.status(err.status).json([{
                 status: err.status,
                 message: err.message,
                 stack: err.stack
@@ -34,7 +36,8 @@ module.exports = function(app) {
     }
 
     app.use(function(err, req, res, next) {
-        res.status(err.status || 500);
+        err.status = err.status || 500;
+        res.status(err.status);
         res.json([{
             status: err.status,
             message: err.message
