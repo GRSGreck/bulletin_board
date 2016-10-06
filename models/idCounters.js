@@ -19,15 +19,14 @@ const IdCountersSchema = new mongoose.Schema({
     }
 });
 
-
 /**
  * @param {String} name - field name of the collection which will be produced by the increment
  * @param {Function} callback
  * @returns {Object} object with idCounters
  */
-IdCountersSchema.statics.getNextSequence = function(name, callback) {
+IdCountersSchema.statics.getInc = function(name, inc, callback) {
     let update = { $inc: {} };
-    update.$inc[name] = 1;
+    update.$inc[name] = inc;
 
     return this.findByIdAndUpdate(_id, update, { new: true, upsert: true }, callback);
 };

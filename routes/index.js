@@ -6,13 +6,16 @@ const authRouter = require('./auth');
 const meRouter = require('./me');
 const userRouter = require('./user');
 const itemRouter = require('./item');
+const mw = require('../middlewares');
 
 module.exports = function(app) {
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json());
-
+    
     app.get('/', (req, res) => res.send(`Hello! The API is at http://localhost:${process.env.PORT}/api`));
     app.use('/api', authRouter);
+
+    app.use(mw.verify);
     app.use('/api/me', meRouter);
     app.use('/api/user', userRouter);
     app.use('/api/item', itemRouter);
