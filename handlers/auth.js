@@ -47,9 +47,8 @@ module.exports = function Auth() {
                     return next(err);
                 }
 
-                getToken(req, res, next, user);
-
                 logger.info(`User registration is successful:\n${user}`);
+                getToken(req, res, next, user);
             });
         });
     };
@@ -65,6 +64,7 @@ module.exports = function Auth() {
                     expiresIn: '1 day'
                 });
 
+                logger.info(`User saying id: ${ user._id }, entered on the site!`);
                 res.set('Authorization', token);
                 res.status(200).json({ token: token });
             }
