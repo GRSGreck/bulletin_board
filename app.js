@@ -9,7 +9,9 @@ const mongoose = require('mongoose');
     ? require('./config/development')
     : require('./config/production');
 
-const app = express();
+const app = express('process.env.NODE_ENV', process.env.NODE_ENV);
+
+logger.debug();
 
 mongoose.connect(process.env.DB_HOST, process.env.DB_NAME, process.env.DB_PORT, {
     user: process.env.DB_USER,

@@ -11,7 +11,9 @@ module.exports = function Auth() {
     };
 
     this.login = function(req, res, next) {
-        UserModel.findOne({ email: req.body.email }, function(err, user) {
+        req.body.email = req.body.email ? req.body.email.toLowerCase() : req.body.email;
+
+        UserModel.findOne({ email: req.body.email }, (err, user) => {
             if (err) {
                 logger.error(err);
                 err.status = 422;
@@ -19,55 +21,53 @@ module.exports = function Auth() {
                 return next(err);
             }
 
-            if (!user) {
-                res.status(404).json([{ object: 'user', message: 'Authentication failed. User not found.' }]);
-            } else if (user) {
-                if (user.password !== req.body.password) {
-                    res.status(422).json([{ field: 'password', message: 'Wrong email or password' }]);
-                } else {
-                    let token = jwt.sign(user, process.env.SECRET, {
-                        expiresIn: '1 day'
-                    });
-
-                    res.status(200).json({ token: token });
-                }
-            }
+            getToken(req, res, next, user);
         })
     };
 
-    // TODO: После регистрации пользователя должен сгенерироваться token - доделать
     this.register = function(req, res, next) {
 
         /**
          * Make the increment in collection "idCounters" and transmits
          * its own id in the function for creating a new user
          */
-        IdCountersModel.getInc('user', 1, function(err, cuouters) {
+        IdCountersModel.getInc('user', (err, cuouters) => {
             if (err) {
                 logger.error(err);
                 return next(err);
             }
 
             req.body._id = cuouters.user;
+            req.body.email = req.body.email ? req.body.email.toLowerCase() : req.body.email;
 
-            new UserModel(req.body).save(function(err, user) {
+            new UserModel(req.body).save((err, user) => {
                 if (err) {
-                    logger.error(err);
                     err.status = 422;
-
-                    IdCountersModel.getInc('user', -1, function(err) {
-                        if (err) {
-                            logger.error(err);
-                            return next(err);
-                        }
-                    });
 
                     return next(err);
                 }
 
+                getToken(req, res, next, user);
+
                 logger.info(`User registration is successful:\n${user}`);
-                res.status(200).json(user);
             });
         });
     };
+
+    function getToken(req, res, next, user) {
+        if (!user) {
+            res.status(404).json([{ success: false, message: 'Authentication failed. User not found.' }]);
+        } else if (user) {
+            if (user.password !== req.body.password) {
+                res.status(422).json([{ field: 'password', message: 'Wrong email or password' }]);
+            } else {
+                let token = jwt.sign(user, process.env.SECRET, {
+                    expiresIn: '1 day'
+                });
+
+                res.set('Authorization', token);
+                res.status(200).json({ token: token });
+            }
+        }
+    }
 };

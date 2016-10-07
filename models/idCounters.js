@@ -24,9 +24,9 @@ const IdCountersSchema = new mongoose.Schema({
  * @param {Function} callback
  * @returns {Object} object with idCounters
  */
-IdCountersSchema.statics.getInc = function(name, inc, callback) {
+IdCountersSchema.statics.getInc = function(name, callback) {
     let update = { $inc: {} };
-    update.$inc[name] = inc;
+    update.$inc[name] = 1;
 
     return this.findByIdAndUpdate(_id, update, { new: true, upsert: true }, callback);
 };

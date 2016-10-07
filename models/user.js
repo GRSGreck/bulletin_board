@@ -5,26 +5,39 @@ const mongoose = require('mongoose');
 const UserSchema = new mongoose.Schema({
     _id: {
         type: Number,
-        required: true
+        min: 1,
+        required: [true, 'Field "{PATH}" number required']
     },
     phone: {
         type: String,
-        required: true/*,
+        validate: {
+            validator: (value) => /^(\+\d{2})?\d{10}$/.test(value),
+            message: '{VALUE} is not a valid phone number (valid phone' +
+            'number should be in a "+380991256085" or "0991256085" this format)'
+        },
+        required: [true, 'Field "{PATH}" number required']/*,,
         unique: true*/
     },
     name: {
         type: String,
-        required: true,
-        default: 'mr. Nobody'
+        minlength: [3, 'The value of field "{PATH}" ("{VALUE}") is shorter than the minimum allowed length ({MINLENGTH}).'],
+        maxlength: [30, 'The value of field "{PATH}" ("{VALUE}") exceeds the maximum allowed length ({MAXLENGTH}).'],
+        required: [true, 'Field "{PATH}" number required']
     },
     email: {
         type: String,
-        required: true,
+        validate: {
+            validator: (value) => /^(([^@]|[a-zA-Z\d.+ -]*)(?=@)@([a-zA-Z\d-]*)\.[a-zA-Z]+)$/.test(value),
+            message: '{VALUE} is not a valid email address (valid email address to be in "ilovelife@gmail.com"this format)'
+        },
+        required: [true, 'Field "{PATH}" number required'],
         unique: true
     },
     password: {
         type: String,
-        required: true
+        minlength: [6, 'The value of field "{PATH}" ("{VALUE}") is shorter than the minimum allowed length ({MINLENGTH}).'],
+        maxlength: [24, 'The value of field "{PATH}" ("{VALUE}") exceeds the maximum allowed length ({MAXLENGTH}).'],
+        required: [true, 'Field "{PATH}" number required']
     }
 });
 
