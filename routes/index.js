@@ -20,7 +20,7 @@ module.exports = function(app) {
     // app.get('/', (req, res) => res.send(`Hello! The API is at http://localhost:${process.env.PORT}/api`));
     app.use('/api', authRouter);
 
-    app.use(mw.verify);
+    // app.use(mw.verify);
     app.use('/api/me', meRouter);
     app.use('/api/user', userRouter);
     app.use('/api/item', itemRouter);

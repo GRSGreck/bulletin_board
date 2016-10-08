@@ -16,6 +16,6 @@ module.exports = function(req, res, next) {
             }
         });
     } else {
-        return res.status(403).json([{ success: false, message: 'Forbidden' }]);
+        return res.status(401).json();
     }
 };

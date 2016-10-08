@@ -38,7 +38,8 @@ module.exports = function Auth() {
             }
 
             req.body._id = cuouters.user;
-            req.body.email = req.body.email ? req.body.email.toLowerCase() : req.body.email;
+            req.body.email = req.body.email ? req.body.email.trim().toLowerCase() : req.body.email;
+            req.body.password = req.body.password ? req.body.password.trim() : req.body.password;
 
             new UserModel(req.body).save((err, user) => {
                 if (err) {
@@ -47,7 +48,7 @@ module.exports = function Auth() {
                     return next(err);
                 }
 
-                logger.info(`User registration is successful:\n${user}`);
+                logger.info(`New user successfully registered:\n${user}`);
                 getToken(req, res, next, user);
             });
         });
@@ -55,8 +56,9 @@ module.exports = function Auth() {
 
     function getToken(req, res, next, user) {
         if (!user) {
-            res.status(404).json([{ success: false, message: 'Authentication failed. User not found.' }]);
+            res.status(422).json([{ field: 'email', message: 'Wrong email or password' }]);
         } else if (user) {
+
             if (user.password !== req.body.password) {
                 res.status(422).json([{ field: 'password', message: 'Wrong email or password' }]);
             } else {
@@ -64,7 +66,7 @@ module.exports = function Auth() {
                     expiresIn: '1 day'
                 });
 
-                logger.info(`User saying id: ${ user._id }, entered on the site!`);
+                logger.info(`User (id: ${ user._id }) is logged!`);
                 res.set('Authorization', token);
                 res.status(200).json({ token: token });
             }
