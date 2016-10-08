@@ -6,9 +6,10 @@ const authRouter = require('./auth');
 const meRouter = require('./me');
 const userRouter = require('./user');
 const itemRouter = require('./item');
-const mw = require('../middlewares');
+// const mw = require('../middlewares');
 const path = require('path');
 const _ = require('underscore');
+const errors = require('../errors');
 
 module.exports = function(app) {
     app.use(bodyParser.urlencoded({ extended: false }));
@@ -46,14 +47,14 @@ module.exports = function(app) {
                         : resultArrErrors.push({ field: field, message: err.errors[field].message });
                 }
         } else {
-            if (!_.isObject(err.message)) {
+            if (err instanceof errors.HttpError) {
+                isDevelopment
+                    ? resultArrErrors.push({ field: err.field, message: err.message, stack: err.stack })
+                    : resultArrErrors.push({ field: err.field, message: err.message });
+            } else {
                 isDevelopment
                     ? resultArrErrors.push({ success: false, message: err.message, stack: err.stack })
                     : resultArrErrors.push({ success: false, message: err.message });
-            } else {
-                isDevelopment
-                    ? resultArrErrors.push({ field: err.message.field, message: err.message.message, stack: err.stack })
-                    : resultArrErrors.push({ field: err.message.field, message: err.message.message });
             }
         }
 

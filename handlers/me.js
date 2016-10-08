@@ -2,6 +2,7 @@
 
 const logger = require('../libs/logger')(module);
 const UserModel = require('../models/user');
+const errors = require('../errors');
 const _ = require('underscore');
 
 module.exports = function Me() {
@@ -20,23 +21,10 @@ module.exports = function Me() {
         if (req.body.phone) req.body.phone = req.body.phone.trim();
         if (req.body.name) req.body.name = req.body.name.trim();
 
-        let responseError = new Error();
-        responseError.status = 422;
-
         if (!req.body.current_password && req.body.new_password) {
-            responseError.message = {
-                field: "current_password",
-                message: 'Wrong current_password'
-            };
-
-            return next(responseError);
+            return next( new errors.HttpError(422, 'Wrong current_password', 'Current_password') );
         } else if (req.body.current_password && !req.body.new_password) {
-            responseError.message = {
-                field: "new_password",
-                message: 'Wrong new_password'
-            };
-
-            return next(responseError);
+            return next( new errors.HttpError(422, 'Wrong new_password', 'new_password') );
         } else {
 
             if (req.body.current_password && req.body.new_password) {
@@ -44,12 +32,7 @@ module.exports = function Me() {
                 req.body.new_password = req.body.new_password.trim();
 
                 if (req.decoded._doc.password !== req.body.current_password) {
-                    responseError.message = {
-                        field: "current_password",
-                        message: 'Existing password does not match the entered'
-                    };
-
-                    return next(responseError);
+                    return next( new errors.HttpError(422, 'Existing password does not match the entered', 'current_password') );
                 }
                 req.body.password = req.body.new_password;
             }
