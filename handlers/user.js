@@ -30,4 +30,21 @@ module.exports = function User() {
                 res.status(200).json(user);
             });
     };
+    
+    this.searchUsers = function(req, res, next) {
+        req.query = req.query || {};
+
+        if (req.query.email) req.query.email = req.query.email.trim().toLowerCase();
+        if (req.query.name) req.query.name = req.query.name.trim();
+
+        UserModel.find(req.query, { password: 0, __v: 0 })
+            .exec((err, users) => {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).json(users);
+            });
+
+    }
 };

@@ -7,5 +7,6 @@ const userHandler = new UserHandler();
 const mw = require('../middlewares');
 
 router.get('/:id', mw.verify, userHandler.getUserById);
+router.get('/',/* mw.verify,*/ userHandler.searchUsers);
 
 module.exports = router;
