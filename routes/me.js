@@ -7,5 +7,6 @@ const meHandler = new MeHandler();
 const mw = require('../middlewares');
 
 router.get('/', mw.verify, meHandler.getCurrentUser);
+router.put('/', mw.verify, meHandler.updateCurrentUser);
 
 module.exports = router;

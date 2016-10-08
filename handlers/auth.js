@@ -2,8 +2,8 @@
 
 const UserModel = require('../models/user');
 const IdCountersModel = require('../models/idCounters');
-const jwt = require('jsonwebtoken');
 const logger = require('../libs/logger')(module);
+const jwt = require('jsonwebtoken');
 
 module.exports = function Auth() {
     this.home = function(req, res, next) {
@@ -11,7 +11,8 @@ module.exports = function Auth() {
     };
 
     this.login = function(req, res, next) {
-        req.body.email = req.body.email ? req.body.email.toLowerCase() : req.body.email;
+        if (req.body.email) req.body.email = req.body.email.trim().toLowerCase();
+        if (req.body.password) req.body.password = req.body.password.trim();
 
         UserModel.findOne({ email: req.body.email }, (err, user) => {
             if (err) {
@@ -38,8 +39,10 @@ module.exports = function Auth() {
             }
 
             req.body._id = cuouters.user;
-            req.body.email = req.body.email ? req.body.email.trim().toLowerCase() : req.body.email;
-            req.body.password = req.body.password ? req.body.password.trim() : req.body.password;
+            if (req.body.email) req.body.email = req.body.email.trim().toLowerCase();
+            if (req.body.password) req.body.password = req.body.password.trim();
+            if (req.body.phone) req.body.phone = req.body.phone.trim();
+            if (req.body.name) req.body.name = req.body.name.trim();
 
             new UserModel(req.body).save((err, user) => {
                 if (err) {

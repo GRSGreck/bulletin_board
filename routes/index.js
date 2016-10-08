@@ -8,6 +8,7 @@ const userRouter = require('./user');
 const itemRouter = require('./item');
 const mw = require('../middlewares');
 const path = require('path');
+const _ = require('underscore');
 
 module.exports = function(app) {
     app.use(bodyParser.urlencoded({ extended: false }));
@@ -31,6 +32,7 @@ module.exports = function(app) {
         next(err);
     });
 
+    // Error handler
     app.use(function(err, req, res, next) {
         let isDevelopment = (!process.env.NODE_ENV || process.env.NODE_ENV ==='development');
         let resultArrErrors = [];
@@ -44,12 +46,17 @@ module.exports = function(app) {
                         : resultArrErrors.push({ field: field, message: err.errors[field].message });
                 }
         } else {
-            isDevelopment
-                ? resultArrErrors.push({ success: false, message: err.message, stack: err.stack })
-                : resultArrErrors.push({ success: false, message: err.message });
+            if (!_.isObject(err.message)) {
+                isDevelopment
+                    ? resultArrErrors.push({ success: false, message: err.message, stack: err.stack })
+                    : resultArrErrors.push({ success: false, message: err.message });
+            } else {
+                isDevelopment
+                    ? resultArrErrors.push({ field: err.message.field, message: err.message.message, stack: err.stack })
+                    : resultArrErrors.push({ field: err.message.field, message: err.message.message });
+            }
         }
 
-        logger.info(isDevelopment);
         logger.error(resultArrErrors);
         res.status(err.status).json(resultArrErrors);
     });

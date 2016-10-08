@@ -2,9 +2,84 @@
 
 const logger = require('../libs/logger')(module);
 const UserModel = require('../models/user');
+const _ = require('underscore');
 
 module.exports = function Me() {
     this.getCurrentUser = function(req, res, next) {
-        req.decoded && res.status(200).json(req.decoded._doc);
+        if (!req.decoded) return;
+        let user = _.omit(req.decoded._doc, 'password', '__v');
+
+        logger.debug('Get current user, success:', user);
+        res.status(200).json(user);
     };
+
+    this.updateCurrentUser = function(req, res, next) {
+        if (!req.decoded) return;
+
+        if (req.body.email) req.body.email = req.body.email.trim().toLowerCase();
+        if (req.body.phone) req.body.phone = req.body.phone.trim();
+        if (req.body.name) req.body.name = req.body.name.trim();
+
+        let responseError = new Error();
+        responseError.status = 422;
+
+        if (!req.body.current_password && req.body.new_password) {
+            responseError.message = {
+                field: "current_password",
+                message: 'Wrong current_password'
+            };
+
+            return next(responseError);
+        } else if (req.body.current_password && !req.body.new_password) {
+            responseError.message = {
+                field: "new_password",
+                message: 'Wrong new_password'
+            };
+
+            return next(responseError);
+        } else {
+
+            if (req.body.current_password && req.body.new_password) {
+                req.body.current_password = req.body.current_password.trim();
+                req.body.new_password = req.body.new_password.trim();
+
+                if (req.decoded._doc.password !== req.body.current_password) {
+                    responseError.message = {
+                        field: "current_password",
+                        message: 'Existing password does not match the entered'
+                    };
+
+                    return next(responseError);
+                }
+                req.body.password = req.body.new_password;
+            }
+
+            UserModel.findByIdAndUpdate(req.decoded._doc._id, req.body, {
+                runValidators: true,
+                new: true,
+                fields: {
+                    password: 0,
+                    __v: 0
+                }
+            }).exec((err, user) => {
+                    if (err) {
+                        err.status = 422;
+
+                        return next(err);
+                    }
+
+                    logger.info('It was updated user:\n' + user);
+                    res.status(200).json(user);
+                });
+        }
+    }
 };
+
+
+
+
+
+
+
+
+
