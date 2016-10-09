@@ -1,9 +1,10 @@
 'use strict';
 
-const ItemModel = require('../models/item');
 const IdCountersModel = require('../models/idCounters');
 const logger = require('../libs/logger')(module);
-// const errors = require('../errors');
+const ItemModel = require('../models/item');
+const mw = require('../middlewares');
+const errors = require('../errors');
 const _ = require('underscore');
 const util = require('util');
 
@@ -168,4 +169,45 @@ module.exports = function Item() {
             res.status(200).json(item);
         });*/
     };
+
+    this.uploadItemImage = function(req, res, next) {
+        if (!req.decoded) return;
+
+        mw.uploadFile(req, res, function(err) {
+            if (err) return next( new errors.HttpError(422, err.message, 'image') );
+
+            ItemModel.findById(req.params.id)
+                .exec((err, item) => {
+                    if (err) {
+                        err.status = 422;
+
+                        return next(err);
+                    }
+                    if (!item) return res.status(404).json();
+
+                    item = item.toObject();
+
+                    if (item.user_id !== req.decoded._doc._id) return res.status(403).json();
+
+                    let body = {
+                        image: '/img/upload/' + req.file.filename
+                    };
+
+                    ItemModel.findByIdAndUpdate(req.params.id, body, {
+                        runValidators: true,
+                        new: true,
+                        fields: { __v: 0 }
+                    }).exec((err, item) => {
+                        if (err) {
+                            err.status = 422;
+
+                            return next(err);
+                        }
+
+                        logger.info('Updated image item:\n' + item);
+                        res.status(200).json(item);
+                    });
+                });
+        });
+    }
 };
