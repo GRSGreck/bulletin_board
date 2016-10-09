@@ -7,6 +7,8 @@ const mw = require('../middlewares');
 const errors = require('../errors');
 const _ = require('underscore');
 const util = require('util');
+const fs = require('fs');
+const path = require('path');
 
 module.exports = function Item() {
     this.searchItems = function(req, res, next) {
@@ -170,7 +172,7 @@ module.exports = function Item() {
         });*/
     };
 
-    this.uploadItemImage = function(req, res, next) {
+    this.uploadItemImageById = function(req, res, next) {
         if (!req.decoded) return;
 
         mw.uploadFile(req, res, function(err) {
@@ -209,5 +211,47 @@ module.exports = function Item() {
                     });
                 });
         });
+    };
+
+    this.removeItemImageById = function(req, res, next) {
+        if (!req.decoded) return;
+
+        ItemModel.findById(req.params.id)
+            .exec((err, item) => {
+                if (err) return next(err);
+                if (!item) return res.status(404).json();
+
+                item = item.toObject();
+
+                if (item.user_id !== req.decoded._doc._id) return res.status(403).json();
+
+                if (item.image && item.image !== process.env.DEFAULT_IMG) {
+                    let fileUnlinkPath = path.join(__dirname, '../', item.image);
+                    let oldImgPath = item.image;
+
+                    fs.unlink(fileUnlinkPath, function(err) {
+                        if (err) {
+                            err.status = 422;
+
+                            return next(err);
+                        }
+
+                        ItemModel.findByIdAndUpdate(req.params.id, { image: process.env.DEFAULT_IMG }, {
+                            runValidators: true,
+                            new: true,
+                            fields: { __v: 0 }
+                        }).exec((err, item) => {
+                            if (err) {
+                                err.status = 422;
+
+                                return next(err);
+                            }
+
+                            logger.info(`Deleted image (${oldImgPath}) of the item:\n ${item}`);
+                            res.status(200).json();
+                        });
+                    });
+                } else res.status(200).json();
+            });
     }
 };

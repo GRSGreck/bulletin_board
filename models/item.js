@@ -29,7 +29,7 @@ const ItemSchema = new mongoose.Schema({
     image: {
         type: String,
         required: [true, 'Field "{PATH}" is required'],
-        default: '/img/default.png'
+        default: process.env.DEFAULT_IMG
     },
     user_id: {
         type: Number,

@@ -5,3 +5,4 @@ process.env.DB_NAME = 'bb';
 process.env.DB_USER = 'root';
 process.env.DB_PASS = '12345678910goooooogle';
 process.env.SECRET = 'iloveorange';
+process.env.DEFAULT_IMG = '/img/default.png';
