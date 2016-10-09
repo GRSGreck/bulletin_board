@@ -92,6 +92,28 @@ module.exports = function Item() {
         });
     };
 
+    this.deleteItemById = function(req, res, next) {
+        if (!req.decoded) return;
+
+        ItemModel.findById(req.params.id)
+            .exec((err, item) => {
+                if (err) return next(err);
+                if (!item) return res.status(404).json();
+
+                item = item.toObject();
+
+                if (item.user_id !== req.decoded._doc._id) return res.status(403).json();
+
+                ItemModel.findByIdAndRemove(req.params.id)
+                    .exec((err, item) => {
+                        if (err) return next(err);
+
+                        logger.info('It was deleted item id: ' + item._id);
+                        res.status(200).json();
+                    });
+            });
+    };
+
     this.updateItemById = function(req, res, next) {
         if (!req.decoded) return;
 
