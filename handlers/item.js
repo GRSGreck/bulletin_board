@@ -32,7 +32,7 @@ module.exports = function Item() {
             .exec((err, items) => {
                 if (err) return next(err);
 
-                logger.debug('By goods Search Results:' + JSON.stringify(items));
+                logger.debug('Items found in the amount of: ' + items.length);
                 res.status(200).json(items);
             });
     };
@@ -90,5 +90,60 @@ module.exports = function Item() {
                 res.status(200).json(item);
             });
         });
+    };
+
+    this.updateItemById = function(req, res, next) {
+        if (!req.decoded) return;
+
+        if (req.body.title) req.body.title = req.body.title.toString().trim();
+        if (req.body.price && _.isNumber(req.body.price)) req.body.price = req.body.price.toFixed(2);
+
+        ItemModel.findById(req.params.id)
+            .exec((err, item) => {
+                if (err) {
+                    err.status = 422;
+
+                    return next(err);
+                }
+                if (!item) return res.status(404).json();
+
+                item = item.toObject();
+
+                if (item.user_id !== req.decoded._doc._id) return res.status(403).json();
+
+                ItemModel.findByIdAndUpdate(req.params.id, req.body, {
+                    runValidators: true,
+                    new: true,
+                    fields: { __v: 0 }
+                }).exec((err, item) => {
+                    if (err) {
+                        err.status = 422;
+
+                        return next(err);
+                    }
+
+                    logger.info('It was updated item:\n' + item);
+                    res.status(200).json(item);
+                });
+
+            });
+
+        // P.S. Был вариант сделать еще таким способом, но не смог отловить ошибку 403 (Forbidden)
+/*        ItemModel.findOneAndUpdate({ _id: req.params.id,  user_id: req.decoded._doc._id }, req.body, {
+            runValidators: true,
+            new: true,
+            fields: { __v: 0 }
+        }).exec((err, item) => {
+            if (err) {
+                err.status = 422;
+
+                return next(err);
+            }
+
+            if (!item) return res.status(404).json();
+
+            logger.info('It was updated item:\n' + item);
+            res.status(200).json(item);
+        });*/
     };
 };

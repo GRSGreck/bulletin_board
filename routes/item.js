@@ -9,5 +9,6 @@ const mw = require('../middlewares');
 router.get('/', itemHandler.searchItems);
 router.get('/:id', itemHandler.getItemById);
 router.post('/', mw.verify, itemHandler.createItem);
+router.put('/:id', mw.verify, itemHandler.updateItemById);
 
 module.exports = router;
