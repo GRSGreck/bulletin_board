@@ -34,7 +34,6 @@ module.exports = function Auth() {
          */
         IdCountersModel.getInc('user', (err, cuouters) => {
             if (err) {
-                logger.error(err);
                 return next(err);
             }
 

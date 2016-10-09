@@ -11,8 +11,6 @@ const mongoose = require('mongoose');
 
 const app = express('process.env.NODE_ENV', process.env.NODE_ENV);
 
-logger.debug();
-
 mongoose.connect(process.env.DB_HOST, process.env.DB_NAME, process.env.DB_PORT, {
     user: process.env.DB_USER,
     password: process.env.DB_PASS,

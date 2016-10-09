@@ -15,9 +15,7 @@ module.exports = function User() {
 
         UserModel.findById(req.params.id, { password: 0, __v: 0 })
             .exec((err, user) => {
-                if (err) {
-                    return next(err);
-                }
+                if (err) return next(err);
 
                 if (!user) {
                     let err = new Error('User not found');
@@ -39,9 +37,7 @@ module.exports = function User() {
 
         UserModel.find(req.query, { password: 0, __v: 0 })
             .exec((err, users) => {
-                if (err) {
-                    return next(err);
-                }
+                if (err) return next(err);
 
                 res.status(200).json(users);
             });
