@@ -28,6 +28,7 @@ const ItemSchema = new mongoose.Schema({
     },
     image: {
         type: String,
+        maxlength: [1000, 'The value of field "{PATH}" ("{VALUE}") exceeds the maximum allowed length ({MAXLENGTH}).'],
         required: [true, 'Field "{PATH}" is required'],
         default: process.env.DEFAULT_IMG
     },

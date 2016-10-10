@@ -3,26 +3,19 @@
 const logger = require('../libs/logger')(module);
 const bodyParser = require('body-parser');
 const authRouter = require('./auth');
-const meRouter = require('./me');
 const userRouter = require('./user');
 const itemRouter = require('./item');
-// const mw = require('../middlewares');
-const path = require('path');
-const _ = require('underscore');
 const errors = require('../errors');
+const meRouter = require('./me');
+const morgan = require('morgan');
 
 module.exports = function(app) {
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json());
+    app.use(morgan('dev'));
 
-    app.get('/', function(req, res) {
-        res.sendFile(path.join(__dirname, '../index.html'));
-    });
-    
-    // app.get('/', (req, res) => res.send(`Hello! The API is at http://localhost:${process.env.PORT}/api`));
+    app.get('/', (req, res) => res.send(`Hello! The API is at http://localhost:${process.env.PORT}/api`));
     app.use('/api', authRouter);
-
-    // app.use(mw.verify);
     app.use('/api/me', meRouter);
     app.use('/api/user', userRouter);
     app.use('/api/item', itemRouter);

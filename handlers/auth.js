@@ -1,8 +1,8 @@
 'use strict';
 
-const UserModel = require('../models/user');
 const IdCountersModel = require('../models/idCounters');
 const logger = require('../libs/logger')(module);
+const UserModel = require('../models/user');
 const jwt = require('jsonwebtoken');
 
 module.exports = function Auth() {
@@ -16,9 +16,8 @@ module.exports = function Auth() {
 
         UserModel.findOne({ email: req.body.email }, (err, user) => {
             if (err) {
-                logger.error(err);
                 err.status = 422;
-
+                
                 return next(err);
             }
 
@@ -33,9 +32,7 @@ module.exports = function Auth() {
          * its own id in the function for creating a new user
          */
         IdCountersModel.getInc('user', (err, cuouters) => {
-            if (err) {
-                return next(err);
-            }
+            if (err) return next(err);
 
             req.body._id = cuouters.user;
             if (req.body.email) req.body.email = req.body.email.trim().toLowerCase();

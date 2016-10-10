@@ -7,8 +7,8 @@ const mw = require('../middlewares');
 const errors = require('../errors');
 const _ = require('underscore');
 const util = require('util');
-const fs = require('fs');
 const path = require('path');
+const fs = require('fs');
 
 module.exports = function Item() {
     this.searchItems = function(req, res, next) {
@@ -47,7 +47,7 @@ module.exports = function Item() {
                 if (err) return next(err);
                 if (!item) return res.status(404).json();
 
-                logger.info('It was updated item:\n' + item);
+                logger.debug(`Get item by id (${ item.id }):\n${ item }`);
                 res.status(200).json(item);
             });
     };
@@ -58,12 +58,10 @@ module.exports = function Item() {
 
         /**
          * Make the increment in collection "idCounters" and transmits
-         * its own id in the function for creating a new user
+         * its own id in the function for creating a new item
          */
         IdCountersModel.getInc('item', (err, cuouters) => {
-            if (err) {
-                return next(err);
-            }
+            if (err) return next(err);
 
             req.body._id = cuouters.item;
 
@@ -152,48 +150,28 @@ module.exports = function Item() {
                 });
 
             });
-
-        // P.S. Был вариант сделать еще таким способом, но не смог отловить ошибку 403 (Forbidden)
-/*        ItemModel.findOneAndUpdate({ _id: req.params.id,  user_id: req.decoded._doc._id }, req.body, {
-            runValidators: true,
-            new: true,
-            fields: { __v: 0 }
-        }).exec((err, item) => {
-            if (err) {
-                err.status = 422;
-
-                return next(err);
-            }
-
-            if (!item) return res.status(404).json();
-
-            logger.info('It was updated item:\n' + item);
-            res.status(200).json(item);
-        });*/
     };
 
     this.uploadItemImageById = function(req, res, next) {
         if (!req.decoded) return;
 
-        mw.uploadFile(req, res, function(err) {
-            if (err) return next( new errors.HttpError(422, err.message, 'image') );
+        ItemModel.findById(req.params.id)
+            .exec((err, item) => {
+                if (err) {
+                    err.status = 422;
 
-            ItemModel.findById(req.params.id)
-                .exec((err, item) => {
-                    if (err) {
-                        err.status = 422;
+                    return next(err);
+                }
+                if (!item) return res.status(404).json();
 
-                        return next(err);
-                    }
-                    if (!item) return res.status(404).json();
+                item = item.toObject();
 
-                    item = item.toObject();
+                if (item.user_id !== req.decoded._doc._id) return res.status(403).json();
 
-                    if (item.user_id !== req.decoded._doc._id) return res.status(403).json();
+                mw.uploadFile(req, res, function(err) {
+                    if (err) return next( new errors.HttpError(422, err.message, 'image') );
 
-                    let body = {
-                        image: '/img/upload/' + req.file.filename
-                    };
+                    let body = { image: '/img/upload/' + req.file.filename };
 
                     ItemModel.findByIdAndUpdate(req.params.id, body, {
                         runValidators: true,
@@ -210,7 +188,7 @@ module.exports = function Item() {
                         res.status(200).json(item);
                     });
                 });
-        });
+            });
     };
 
     this.removeItemImageById = function(req, res, next) {

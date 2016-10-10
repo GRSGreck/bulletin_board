@@ -8,6 +8,7 @@ const _ = require('underscore');
 module.exports = function Me() {
     this.getCurrentUser = function(req, res, next) {
         if (!req.decoded) return;
+        
         let user = _.omit(req.decoded._doc, 'password', '__v');
 
         logger.debug('Get current user, success:', user);

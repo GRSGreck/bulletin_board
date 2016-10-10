@@ -24,7 +24,7 @@ module.exports = function User() {
                     return next(err);
                 }
 
-                logger.info('It was updated user:\n' + user);
+                logger.debug(`Get user by id (${ user.id }):\n${ user }`);
                 res.status(200).json(user);
             });
     };
@@ -32,13 +32,14 @@ module.exports = function User() {
     this.searchUsers = function(req, res, next) {
         req.query = req.query || {};
 
-        if (req.query.email) req.query.email = req.query.email.trim().toLowerCase();
-        if (req.query.name) req.query.name = req.query.name.trim();
+        if (req.query.email) req.query.email = new RegExp(req.query.email.trim(), 'i');
+        if (req.query.name) req.query.name = new RegExp(req.query.name.trim(), 'i');
 
         UserModel.find(req.query, { password: 0, __v: 0 })
             .exec((err, users) => {
                 if (err) return next(err);
 
+                logger.info('Users found in the amount of: ' + users.length);
                 res.status(200).json(users);
             });
 

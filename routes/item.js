@@ -1,10 +1,10 @@
 'use strict';
 
-const express = require('express');
-const router = express.Router();
 const ItemHandler = require('../handlers/item');
 const itemHandler = new ItemHandler();
 const mw = require('../middlewares');
+const express = require('express');
+const router = express.Router();
 
 router.get('/', itemHandler.searchItems);
 router.get('/:id', itemHandler.getItemById);
