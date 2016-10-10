@@ -5,12 +5,9 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "NODE_ENV=development nodemon app.js"
+    "start": "NODE_ENV=development node app.js"
   },
-  "keywords": [
-    "bulletin",
-    "board"
-  ],
+  "keywords": [],
   "author": "Grechuk Roman",
   "license": "ISC",
   "dependencies": {
