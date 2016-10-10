@@ -8,7 +8,7 @@ const express = require('express');
     ? require('./config/development')
     : require('./config/production');
 
-const app = express('process.env.NODE_ENV', process.env.NODE_ENV);
+const app = express();
 
 mongoose.connect(process.env.DB_HOST, process.env.DB_NAME, process.env.DB_PORT, {
     user: process.env.DB_USER,
