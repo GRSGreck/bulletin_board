@@ -5,8 +5,6 @@ var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var helpers = require('./config/helpers');
 
-console.log('R helpers src: ---------------->', helpers.root('src'));
-
 module.exports = {
     context: helpers.root('src'),
 
@@ -14,6 +12,10 @@ module.exports = {
         polyfills: './polyfills.ts',
         vendor: './vendor.ts',
         app: './main.ts'
+        // app: ['./main.ts', 'webpack-hot-middleware/client']
+        // polyfills: ['webpack-dev-server/client', 'webpack/hot/dev-server', './polyfills.ts'],
+        // vendor: ['webpack-dev-server/client', 'webpack/hot/dev-server', './vendor.ts'],
+        // app: ['webpack-dev-server/client', 'webpack/hot/only-dev-server', './main.ts']
     },
 
     resolve: {
@@ -49,6 +51,10 @@ module.exports = {
 
 
     plugins: [
+        // new webpack.optimize.OccurenceOrderPlugin(),
+        // new webpack.HotModuleReplacementPlugin(),
+        // new webpack.NoErrorsPlugin(),
+
         new webpack.optimize.CommonsChunkPlugin({
             name: ['app', 'vendor', 'polyfills']
         }),
@@ -64,13 +70,14 @@ module.exports = {
 
     output: {
         path: helpers.root('dist'),
-        publicPath: 'http://localhost:8080/',
+        publicPath: 'http://localhost:3030/',
         filename: '[name].js',
         chunkFilename: '[id].chunk.js'
     },
 
     devServer: {
         historyApiFallback: true,
-        stats: 'minimal'
+        stats: 'minimal',
+        hot: true
     }
 };
