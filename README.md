@@ -16,6 +16,6 @@ API написано на **Nodejs v.4.6.0**
     выводит только уровень "error" (не выводит: "debug", "warn", "info"),
     настройки находятся в файле "/config/production.js". Что бы
     запустить сервер в режиме "production" нужно в файле package.json
-    в поле start ("start": "NODE_ENV=development node app.js") заменить
+    в поле start ("start": "NODE_ENV=development node server.js") заменить
     слово "development" на "production" ("start": "NODE_ENV=production
-    node app.js") и запустить (перезапустить сервер).
+    node server.js") и запустить (перезапустить сервер).

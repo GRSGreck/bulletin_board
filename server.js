@@ -1,6 +1,6 @@
 'use strict';
 
-const logger = require('./libs/logger')(module);
+const logger = require('./server/libs/logger')(module);
 const mongoose = require('mongoose');
 const express = require('express');
 
@@ -25,7 +25,7 @@ const db = mongoose.connection;
 db.on('open', function() {
     logger.info(`Connecting to a database "${ process.env.DB_NAME }" was completed successfully on port: ${ process.env.DB_PORT }`);
 
-    require('./routes')(app);
+    require('./server/routes')(app);
 
     app.listen(process.env.PORT, function() {
         logger.warn(`NODE_ENV: ${ process.env.NODE_ENV ? process.env.NODE_ENV : 'development' }`);
