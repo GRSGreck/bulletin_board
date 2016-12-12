@@ -1,24 +1,17 @@
 'use strict';
 
-var webpack = require('webpack');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
-var helpers = require('./config/helpers');
-var hotMiddlewareScript = 'webpack-hot-middleware/client?path=http://localhost:3030/__webpack_hmr&reload=true';
+const webpack = require('webpack');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const helpers = require('./config/helpers');
 
 module.exports = {
     context: helpers.root('src'),
 
     entry: {
-        // polyfills: './polyfills.ts',
-        // vendor: './vendor.ts',
-        // app: './main.ts'
-        polyfills: ['./polyfills.ts', hotMiddlewareScript],
-        vendor: ['./vendor.ts', hotMiddlewareScript],
-        app: ['./main.ts', hotMiddlewareScript]
-        // polyfills: ['webpack-dev-server/client', 'webpack/hot/dev-server', './polyfills.ts'],
-        // vendor: ['webpack-dev-server/client', 'webpack/hot/dev-server', './vendor.ts'],
-        // app: ['webpack-dev-server/client', 'webpack/hot/only-dev-server', './main.ts']
+        polyfills: './polyfills.ts',
+        vendor: './vendor.ts',
+        app: './main.ts'
     },
 
     resolve: {
@@ -54,10 +47,6 @@ module.exports = {
 
 
     plugins: [
-        new webpack.NoErrorsPlugin(),
-        new webpack.optimize.OccurrenceOrderPlugin(),
-        new webpack.HotModuleReplacementPlugin(),
-
         new webpack.optimize.CommonsChunkPlugin({
             names: ['app', 'vendor', 'polyfills']
         }),
@@ -69,18 +58,22 @@ module.exports = {
         })
     ],
 
-    devtool: 'cheap-module-eval-source-map',
+    devtool: '#cheap-module-eval-source-map',
 
     output: {
         path: helpers.root('dist'),
-        publicPath: 'http://localhost:3030/',
+        publicPath: 'http://localhost:8080/',
         filename: '[name].js',
         chunkFilename: '[id].chunk.js'
-    }/*,
+    },
 
     devServer: {
         historyApiFallback: true,
-        stats: 'minimal',
-        hot: true
-    }*/
+        stats: 'normal',
+        proxy: [{
+            path: '/api',
+            target: 'http://localhost:3030'/*,
+            secure: true*/
+        }]
+    }
 };

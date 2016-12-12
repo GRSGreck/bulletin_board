@@ -8,31 +8,11 @@ const itemRouter = require('./item');
 const errors = require('../errors');
 const meRouter = require('./me');
 const morgan = require('morgan');
-const webpackConf = require('../../webpack.config');
-const webpack = require('webpack');
-const compiler = webpack(webpackConf);
-const webpackDevMiddleware = require('webpack-dev-middleware');
-const webpackHotMiddleware = require('webpack-hot-middleware');
-
 
 module.exports = function(app) {
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json());
     app.use(morgan('dev'));
-
-    app.use(webpackDevMiddleware(compiler, {
-        publicPath: webpackConf.output.publicPath,
-        contentBase: 'src',
-        stats: {
-            chunks: false,
-            colors: true
-        },
-        watchOptions: {
-            aggregateTimeout: 100
-        }
-    }));
-
-    app.use(webpackHotMiddleware(compiler));
 
     app.get('/', (req, res) => res.send(`Hello! The API is at http://localhost:${process.env.PORT}/api`));
     app.use('/api', authRouter);
