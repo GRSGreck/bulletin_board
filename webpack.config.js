@@ -4,15 +4,18 @@ var webpack = require('webpack');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var helpers = require('./config/helpers');
+var hotMiddlewareScript = 'webpack-hot-middleware/client?path=http://localhost:3030/__webpack_hmr&reload=true';
 
 module.exports = {
     context: helpers.root('src'),
 
     entry: {
-        polyfills: './polyfills.ts',
-        vendor: './vendor.ts',
-        app: './main.ts'
-        // app: ['./main.ts', 'webpack-hot-middleware/client']
+        // polyfills: './polyfills.ts',
+        // vendor: './vendor.ts',
+        // app: './main.ts'
+        polyfills: ['./polyfills.ts', hotMiddlewareScript],
+        vendor: ['./vendor.ts', hotMiddlewareScript],
+        app: ['./main.ts', hotMiddlewareScript]
         // polyfills: ['webpack-dev-server/client', 'webpack/hot/dev-server', './polyfills.ts'],
         // vendor: ['webpack-dev-server/client', 'webpack/hot/dev-server', './vendor.ts'],
         // app: ['webpack-dev-server/client', 'webpack/hot/only-dev-server', './main.ts']
@@ -51,12 +54,12 @@ module.exports = {
 
 
     plugins: [
-        // new webpack.optimize.OccurenceOrderPlugin(),
-        // new webpack.HotModuleReplacementPlugin(),
-        // new webpack.NoErrorsPlugin(),
+        new webpack.NoErrorsPlugin(),
+        new webpack.optimize.OccurrenceOrderPlugin(),
+        new webpack.HotModuleReplacementPlugin(),
 
         new webpack.optimize.CommonsChunkPlugin({
-            name: ['app', 'vendor', 'polyfills']
+            names: ['app', 'vendor', 'polyfills']
         }),
 
         new ExtractTextPlugin('[name].css'),
@@ -73,11 +76,11 @@ module.exports = {
         publicPath: 'http://localhost:3030/',
         filename: '[name].js',
         chunkFilename: '[id].chunk.js'
-    },
+    }/*,
 
     devServer: {
         historyApiFallback: true,
         stats: 'minimal',
         hot: true
-    }
+    }*/
 };
