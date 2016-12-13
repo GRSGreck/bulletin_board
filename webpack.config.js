@@ -22,36 +22,56 @@ module.exports = {
         loaders: [
             {
                 test: /\.ts$/,
+                include: helpers.root('src'),
                 loaders: ['awesome-typescript-loader', 'angular2-template-loader']
             },
             {
                 test: /\.html$/,
+                include: helpers.root('src'),
                 loader: 'html-loader'
             },
             {
                 test: /\.(png|jpe?g|gif|svg|woff|woff2|ttf|eot|ico)$/,
+                include: helpers.root('src'),
                 loader: 'file-loader?name=assets/[name].[hash].[ext]'
             },
             {
-                test: /\.css$/,
+                test: /\.p?css$/,
                 exclude: helpers.root('src', 'app'),
-                loader: ExtractTextPlugin.extract('style-loader', 'css-loader')
+                loader: ExtractTextPlugin.extract('style-loader', 'css-loader?sourceMap!postcss-loader')
             },
             {
-                test: /\.css$/,
+                test: /\.p?css$/,
                 include: helpers.root('src', 'app'),
-                loader: 'raw-loader'
+                loaders: [
+                    'to-string-loader',
+                    'css-loader?sourceMap',
+                    'postcss-loader'
+                ]
             }
         ]
     },
 
+    postcss: function () {
+        return [
+            require('postcss-pxtorem'),
+            require('autoprefixer')({
+                browsers: [
+                    '> 5%',
+                    'last 20 versions',
+                    'ie > 7'
+                ]
+            }),
+            require('precss')
+        ]
+    },
 
     plugins: [
         new webpack.optimize.CommonsChunkPlugin({
             names: ['app', 'vendor', 'polyfills']
         }),
 
-        new ExtractTextPlugin('[name].css'),
+        new ExtractTextPlugin('styles.css'),
 
         new HtmlWebpackPlugin({
             template: './index.html'
