@@ -25,6 +25,7 @@ module.exports = {
                 include: helpers.root('src'),
                 loaders: ['awesome-typescript-loader', 'angular2-template-loader']
             },
+            // { test:/bootstrap-sass[\/\\]assets[\/\\]javascripts[\/\\]/, loader: 'imports-loader?jQuery=jquery' },
             {
                 test: /\.html$/,
                 include: helpers.root('src'),
@@ -36,21 +37,37 @@ module.exports = {
                 loader: 'file-loader?name=assets/[name].[hash].[ext]'
             },
             {
-                test: /\.p?css$/,
-                exclude: helpers.root('src', 'app'),
-                loader: ExtractTextPlugin.extract('style-loader', 'css-loader?sourceMap!postcss-loader')
+                test: /\.(woff2?|ttf|eot|svg)$/,
+                exclude: helpers.root('src'),
+                loader: 'url?limit=10000'
             },
             {
-                test: /\.p?css$/,
+                test: /\.scss$/,
+                exclude: helpers.root('src', 'app'),
+                loader: ExtractTextPlugin.extract(
+                    'style-loader',
+                    [
+                        'css-loader?modules&importLoaders=2&localIdentName=[name]__[local]__[hash:base64:5]',
+                        'postcss-loader',
+                        'sass-loader',
+                        'sass-resources-loader'
+                    ].join('!')
+                )
+            },
+            {
+                test: /\.scss$/,
                 include: helpers.root('src', 'app'),
                 loaders: [
                     'to-string-loader',
                     'css-loader?sourceMap',
-                    'postcss-loader'
+                    'postcss-loader',
+                    'sass?sourceMap'
                 ]
             }
-        ]
+        ],
     },
+
+    sassResources: helpers.root('src', 'public', 'styles', 'sass-resources.scss'),
 
     postcss: function () {
         return [
@@ -61,8 +78,8 @@ module.exports = {
                     'last 20 versions',
                     'ie > 7'
                 ]
-            }),
-            require('precss')
+            })/*,
+            require('precss')*/
         ]
     },
 
@@ -72,6 +89,12 @@ module.exports = {
         }),
 
         new ExtractTextPlugin('styles.css'),
+
+        new webpack.ProvidePlugin({
+            jQuery: 'jquery',
+            $: 'jquery',
+            jquery: 'jquery'
+        }),
 
         new HtmlWebpackPlugin({
             template: './index.html'

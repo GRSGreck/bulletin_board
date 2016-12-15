@@ -3,7 +3,6 @@
 const logger = require('../libs/logger')(module);
 const UserModel = require('../models/user');
 const errors = require('../errors');
-const _ = require('underscore');
 
 module.exports = function User() {
     this.getUserById = function(req, res, next) {

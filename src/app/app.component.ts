@@ -1,11 +1,16 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import * as _ from 'lodash';
 
-import '../public/styles/styles.pcss';
+import '../public/styles/styles.scss';
 
 @Component({
     selector: 'my-app',
     templateUrl: './app.component.html',
-    styleUrls: ['app.component.pcss']
+    styleUrls: ['app.component.scss']
 })
 
-export class AppComponent {}
+export class AppComponent implements OnInit {
+    ngOnInit() {
+        console.log('is number', _.isNumber(15));
+    }
+}

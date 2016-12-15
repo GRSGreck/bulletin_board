@@ -3,7 +3,7 @@
 const logger = require('../libs/logger')(module);
 const UserModel = require('../models/user');
 const errors = require('../errors');
-const _ = require('underscore');
+const _ = require('lodash');
 
 module.exports = function Me() {
     this.getCurrentUser = function(req, res, next) {
