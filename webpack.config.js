@@ -67,7 +67,7 @@ module.exports = {
         ],
     },
 
-    sassResources: helpers.root('src', 'public', 'styles', 'sass-resources.scss'),
+    sassResources: helpers.root('config', 'sass-resources.scss'),
 
     postcss: function () {
         return [
