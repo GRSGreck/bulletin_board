@@ -23,7 +23,6 @@
     "@angular/platform-browser": "~2.3.0",
     "@angular/platform-browser-dynamic": "~2.3.0",
     "@angular/router": "~3.3.0",
-    "@types/lodash": "^4.14.43",
     "body-parser": "1.15.2",
     "core-js": "^2.4.1",
     "express": "4.14.0",
@@ -37,6 +36,7 @@
     "zone.js": "^0.7.2"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.43",
     "@types/node": "^6.0.45",
     "angular2-template-loader": "^0.4.0",
     "awesome-typescript-loader": "^2.2.4",

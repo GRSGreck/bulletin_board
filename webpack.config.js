@@ -49,7 +49,7 @@ module.exports = {
                     [
                         'css-loader?modules&importLoaders=2&localIdentName=[name]__[local]__[hash:base64:5]',
                         'postcss-loader',
-                        'sass-loader',
+                        'sass-loader?sourceMap',
                         'sass-resources-loader'
                     ].join('!')
                 )
@@ -61,7 +61,7 @@ module.exports = {
                     'to-string-loader',
                     'css-loader?sourceMap',
                     'postcss-loader',
-                    'sass?sourceMap'
+                    'sass-loader?sourceMap'
                 ]
             }
         ],

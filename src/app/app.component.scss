@@ -1,23 +1,16 @@
- h1 {
-     font-size: 50px;
- }
+h1 {
+  font-size: 50px;
+}
 
- a {
-     text-decoration: none;
-     font-weight: bold;
-     color: #000;
+a {
+  text-decoration: none;
+  font-weight: bold;
+  color: #000;
 
-   &:hover {
-     text-decoration: underline;
-   }
- }
-
- //$brand-primary:         darken(#428bca, 6.5%) !default; // #337ab7
- //$brand-success:         #5cb85c !default;
- //$brand-info:            #5bc0de !default;
- //$brand-warning:         #f0ad4e !default;
- //$brand-danger:          #d9534f !default;
-
+  &:hover {
+    text-decoration: underline;
+  }
+}
 
 
 
