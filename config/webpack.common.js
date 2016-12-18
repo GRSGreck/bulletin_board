@@ -34,12 +34,12 @@ module.exports = {
             {
                 test: /\.(png|jpe?g|gif|svg|woff|woff2|ttf|eot|ico)$/,
                 include: helpers.root('src'),
-                loader: 'file-loader?name=assets/[name].[hash].[ext]'
+                loader: 'url-loader?name=assets/[name].[hash].[ext]&limit=5000'
             },
             {
                 test: /\.(woff2?|ttf|eot|svg)$/,
                 exclude: helpers.root('src'),
-                loader: 'url?name=assets/[name].[hash].[ext]&limit=10000'
+                loader: 'url-loader?name=assets/[name].[hash].[ext]&limit=10000'
             },
             {
                 test: /\.scss$/,

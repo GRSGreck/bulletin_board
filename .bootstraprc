@@ -16,18 +16,21 @@ env:
       - css-loader
       - resolve-url-loader
       - sass-loader
+    extractStyles: false
+
   production:
     styleLoaders:
       - style-loader
       - css-loader
       - sass-loader
+    extractStyles: true
 
 # Extract styles to stand-alone css file
 # Different settings for different environments can be used,
 # It depends on value of NODE_ENV environment variable
 # This param can also be set in webpack config:
 #   entry: 'bootstrap-loader/extractStyles'
-extractStyles: true
+#extractStyles: true
 #env:
 # development:
 #   extractStyles: false

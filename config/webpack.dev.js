@@ -1,9 +1,12 @@
 'use strict';
 
+const webpack = require('webpack');
 const webpackMerge = require('webpack-merge');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const commonConfig = require('./webpack.common');
 const helpers = require('./helpers');
+
+const ENV = process.env.NODE_ENV || 'development';
 
 module.exports = webpackMerge(commonConfig, {
     devtool: '#cheap-module-eval-source-map',
@@ -15,7 +18,14 @@ module.exports = webpackMerge(commonConfig, {
         chunkFilename: '[id].chunk.js'
     },
 
-    plugins: [ new ExtractTextPlugin('[name].css') ],
+    plugins: [
+        new ExtractTextPlugin('[name].css'),
+        new webpack.DefinePlugin({
+            'process.env': {
+                'ENV': JSON.stringify(ENV)
+            }
+        })
+    ],
 
     devServer: {
         historyApiFallback: true,

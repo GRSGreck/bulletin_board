@@ -11,6 +11,8 @@ import '../public/styles/styles.scss';
 
 export class AppComponent implements OnInit {
     ngOnInit() {
+        console.log('process.env.ENV:', process.env.ENV);
+
         console.log('is number', _.isNumber(15));
     }
 }
