@@ -25,7 +25,7 @@ module.exports = {
                 include: helpers.root('src'),
                 loaders: ['awesome-typescript-loader', 'angular2-template-loader']
             },
-            // { test:/bootstrap-sass[\/\\]assets[\/\\]javascripts[\/\\]/, loader: 'imports-loader?jQuery=jquery' },
+            { test: /bootstrap-sass\/assets\/javascripts\//, loader: 'imports-loader?jQuery=jquery' },
             {
                 test: /\.html$/,
                 include: helpers.root('src'),
