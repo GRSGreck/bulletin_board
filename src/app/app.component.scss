@@ -1,9 +1,11 @@
 @import '~bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss';
+@import 'src/public/styles/bootstrap-variables.scss';
 @import 'src/public/styles/app-variables.scss';
 
 h1 {
   font-size: $font-size;
-  color: $brand-danger;
+  color: #fff;
+  background: $brand-danger;
 }
 
 p {
