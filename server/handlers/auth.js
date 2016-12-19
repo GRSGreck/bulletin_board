@@ -17,7 +17,7 @@ module.exports = function Auth() {
         UserModel.findOne({ email: req.body.email }, (err, user) => {
             if (err) {
                 err.status = 422;
-                
+
                 return next(err);
             }
 
