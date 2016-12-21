@@ -3,15 +3,31 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const UserModel = require('../models/user');
+const logger = require('./logger')(module);
 
-passport.use(new LocalStrategy(
-    function (username, password, cb) {
-        UserModel.findOne({ email: username }, function (err, user) {
-            if (err) return cb(err);
-            if (!user) return cb(null, false, { message: 'Incorrect username.' });
-            if (user.password !== password) return cb(null, false, { message: 'Incorrect password.' });
+module.exports = function () {
+    passport.use(new LocalStrategy({
+            usernameField: 'email',
+            passwordField: 'password'
+        },
+        function (email, password, done) {
+            UserModel.findOne({ email: email }, function (err, user) {
+                if (err) return done(err);
+                if (!user) return done(null, false, { message: 'Incorrect username.' });
+                if (user.password !== password) return done(null, false, { message: 'Incorrect password.' });
 
-            return cb(null, user);
-        })
-    }
-));
+                return done(null, user);
+            })
+        }
+    ));
+
+    passport.serializeUser(function (user, done) {
+        done(null, user._id);
+    });
+
+    passport.deserializeUser(function (id, done) {
+        UserModel.findById(id, function (err, user) {
+            done(err, user);
+        });
+    });
+};

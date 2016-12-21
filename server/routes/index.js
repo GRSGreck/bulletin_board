@@ -10,18 +10,23 @@ const meRouter = require('./me');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const passport = require("passport");
+const session = require('express-session');
 
 module.exports = function(app) {
+    app.use(morgan('dev'));
     app.use(cookieParser());
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json());
-    app.use(express.session({
-        secret: process.env.SECRET/*,
-        cookie: { secure: true }*/
+    app.use(session({
+        secret: process.env.SECRET,
+        resave: false,
+        saveUninitialized: true,
+        cookie: { secure: true }
     }));
     app.use(passport.initialize());
     app.use(passport.session());
-    app.use(morgan('dev'));
+
+    require('../libs/passport')();
 
     app.get('/', (req, res) => res.send(`Hello! The API is at http://localhost:${process.env.PORT}/api`));
     app.use('/api', authRouter);
