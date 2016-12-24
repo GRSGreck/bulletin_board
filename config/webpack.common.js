@@ -60,6 +60,7 @@ module.exports = {
     postcss: function () {
         return [
             require('postcss-pxtorem'),
+            require('postcss-focus'),
             require('autoprefixer')({
                 browsers: ['> 5%', 'last 20 versions', 'ie > 7']
             })

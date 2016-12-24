@@ -1,28 +1,84 @@
-<h1>Hello from Angular App with Webpack</h1>
-<div>
-    <ul>
-        <li><a href="/api">api</a></li>
-        <li><a href="/api/user">users</a></li>
-    </ul>
+<nav class="container-fluid box-shadow">
+    <div class="container">
+        <div class="row">
+            <span class="logo">
+                <span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span>
+                <span class="glyphicon logo-text">BulletinBoard</span>
+            </span>
+            <!--
+            <button type="button" class="btn btn-link">
+                <span class="glyphicon glyphicon-log-out pull-right"></span> Выход
+            </button>-->
+            <button type="button" class="btn btn-link pull-right">
+                <span class="glyphicon glyphicon-log-in"></span> Вход
+            </button>
+            <button type="button" class="btn btn-success pull-right">Регистрация</button>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <h2 class="text-center">Регистрация</h2>
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <label for="email" class="col-sm-2 control-label">Email</label>
+                    <div class="col-sm-10">
+                        <input type="email" name="email" class="form-control" id="email" placeholder="Email">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="password" class="col-sm-2 control-label">Пароль</label>
+                    <div class="col-sm-10">
+                        <input type="password" name="password" class="form-control" id="password" placeholder="Пароль">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="name" class="col-sm-2 control-label">Имя</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="name" class="form-control" id="name" placeholder="Имя">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="phone" class="col-sm-2 control-label">Телефон</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="phone" class="form-control" id="phone" placeholder="Телефон">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="submit" class="btn btn-primary">Зарегестрироваться</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
-<!-- Standard button -->
-<button type="button" class="btn btn-default">Default</button>
-
-<!-- Provides extra visual weight and identifies the primary action in a set of buttons -->
-<button type="button" class="btn btn-primary">Primary</button>
-
-<!-- Indicates a successful or positive action -->
-<button type="button" class="btn btn-success">Success</button>
-
-<!-- Contextual button for informational alert messages -->
-<button type="button" class="btn btn-info">Info</button>
-
-<!-- Indicates caution should be taken with this action -->
-<button type="button" class="btn btn-warning">Warning</button>
-
-<!-- Indicates a dangerous or potentially negative action -->
-<button type="button" class="btn btn-danger">Danger</button>
-
-<!-- Deemphasize a button by making it look like a link while maintaining button behavior -->
-<button type="button" class="btn btn-link">Link</button>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <h2 class="text-center">Вход</h2>
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <label for="email" class="col-sm-2 control-label">Email</label>
+                    <div class="col-sm-10">
+                        <input type="email" name="email" class="form-control" id="email" placeholder="Email">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="password" class="col-sm-2 control-label">Пароль</label>
+                    <div class="col-sm-10">
+                        <input type="password" name="password" class="form-control" id="password" placeholder="Пароль">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="submit" class="btn btn-primary">Вход</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

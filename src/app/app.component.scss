@@ -1,27 +1,24 @@
-@import '~bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss';
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss";
 @import 'src/public/styles/bootstrap-variables.scss';
 @import 'src/public/styles/app-variables.scss';
 
-h1 {
-  font-size: $font-size;
-  color: #fff;
-  background: $brand-danger;
-}
+nav {
+  box-shadow: $box-shadow;
+  background: $gray-lighter;
+  padding-top: 10px;
+  padding-bottom: 10px;
 
-p {
-  background: grey;
-  color: $brand-success;
-}
+  span.logo {
+    cursor: pointer;
+  }
 
-a {
-  text-decoration: none;
-  font-weight: bold;
-  color: #000;
+  .row > span {
+    color: $logo-bg;
+    font-size: 45px;
+    line-height: 45px;
 
-  &:hover {
-    text-decoration: underline;
+    &.logo-text {
+      font-size: 3.9rem;
+    }
   }
 }
-
-
-

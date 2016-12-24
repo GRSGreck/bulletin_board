@@ -4,6 +4,7 @@ const IdCountersModel = require('../models/idCounters');
 const logger = require('../libs/logger')(module);
 const UserModel = require('../models/user');
 const passport = require('passport');
+const _ = require('lodash');
 
 module.exports = function Auth() {
     this.home = function(req, res, next) {
@@ -22,6 +23,7 @@ module.exports = function Auth() {
             req.logIn(user, function (err) {
                 if (err) return next(err);
 
+                user = _.omit(user.toObject(), ['__v', 'password']);
                 logger.info(`User (id: ${ user._id }) is logged!`);
 
                 return res.status(200).json(user);
@@ -52,11 +54,13 @@ module.exports = function Auth() {
                     return next(err);
                 }
 
+
                 logger.info(`New user successfully registered:\n${user}`);
 
                 req.logIn(user, function (err) {
                     if (err) return next(err);
 
+                    user = _.omit(user.toObject(), ['__v', 'password']);
                     logger.info(`User (id: ${ user._id }) is logged!`);
 
                     return res.status(200).json(user);
