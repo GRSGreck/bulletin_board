@@ -14,8 +14,7 @@ const UserSchema = new mongoose.Schema({
             validator: (value) => /^(\+\d{2})?\d{10}$/.test(value),
             message: '{VALUE} is not a valid phone number (valid phone' +
             'number should be in a "+380991256085" or "0991256085" this format)'
-        }/*,
-        unique: true*/
+        }
     },
     name: {
         type: String,

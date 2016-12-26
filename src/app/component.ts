@@ -5,8 +5,8 @@ import '../public/styles/styles.scss';
 
 @Component({
     selector: 'my-app',
-    templateUrl: './app.component.html',
-    styleUrls: ['app.component.scss']
+    templateUrl: './component.html',
+    styleUrls: ['./component.scss']
 })
 
 export class AppComponent implements OnInit {

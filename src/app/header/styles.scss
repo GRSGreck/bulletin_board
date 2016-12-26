@@ -2,23 +2,23 @@
 @import 'src/public/styles/bootstrap-variables.scss';
 @import 'src/public/styles/app-variables.scss';
 
-nav {
+.header {
   box-shadow: $box-shadow;
   background: $gray-lighter;
   padding-top: 10px;
   padding-bottom: 10px;
 
-  span.logo {
+  & span.logo {
     cursor: pointer;
-  }
 
-  .row > span {
-    color: $logo-bg;
-    font-size: 45px;
-    line-height: 45px;
+    & > span {
+      color: $logo-bg;
+      font-size: 45px;
+      line-height: 45px;
 
-    &.logo-text {
-      font-size: 3.9rem;
+      &.logo-text {
+        font-size: 3.9rem;
+      }
     }
   }
 }
