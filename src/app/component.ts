@@ -1,6 +1,4 @@
-import {Component, OnInit} from '@angular/core';
-import * as _ from 'lodash';
-
+import {Component} from '@angular/core';
 import '../public/styles/styles.scss';
 
 @Component({
@@ -9,10 +7,4 @@ import '../public/styles/styles.scss';
     styleUrls: ['./component.scss']
 })
 
-export class AppComponent implements OnInit {
-    ngOnInit() {
-        console.log('process.env.ENV:', process.env.ENV);
-
-        console.log('is number', _.isNumber(15));
-    }
-}
+export class AppComponent {}
