@@ -1,13 +1,13 @@
-import {Component} from '@angular/core';
+import { Component } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import * as _ from 'lodash';
 
 import { User } from '../../models/user';
 import {AppService} from "../../service";
 
-interface FormValidationInterface {
-    getFormControl(fieldName: string): FormControl;
-}
+// interface FormValidationInterface {
+//     getFormControl(fieldName: string): FormControl;
+// }
 
 abstract class FormValidationAbstract {
     public getInvalidFields(formControl: FormControl): string[] {
@@ -54,7 +54,7 @@ abstract class FormValidationAbstract {
     styleUrls: ['./styles.scss']
 })
 
-export class FormRegisterComponent extends FormValidationAbstract implements FormValidationInterface {
+export class FormRegisterComponent extends FormValidationAbstract/* implements FormValidationInterface */{
     formRegister: FormGroup;
 
     constructor(
@@ -80,9 +80,13 @@ export class FormRegisterComponent extends FormValidationAbstract implements For
     }
 
     public onSubmit(): void {
-        let user = <User>this.formRegister.value;
+        let user = this.formRegister.value;
         console.log('form value:', this.formRegister.value);
 
-        this.appService.registeredUser(user).subscribe(result => console.log(result));
+        this.appService.registeredUser(user)
+            .subscribe(
+                user => console.log('user:', user),
+                err => console.error(err)
+            );
     }
 }

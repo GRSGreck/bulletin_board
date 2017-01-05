@@ -5,14 +5,13 @@
                 <span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span>
                 <span class="glyphicon logo-text">BulletinBoard</span>
             </span>
-            <!--
-            <button type="button" class="btn btn-link">
-                <span class="glyphicon glyphicon-log-out pull-right"></span> Выход
-            </button>-->
-            <button type="button" class="btn btn-link pull-right">
-                <span class="glyphicon glyphicon-log-in"></span> Вход
+            <button type="button" class="btn btn-link pull-right" (click)="goHome()">
+                <span class="glyphicon glyphicon-log-out"></span> Выход
             </button>
-            <button type="button" class="btn btn-success pull-right">Регистрация</button>
+            <a routerLink="/login" class="btn btn-link pull-right" routerLinkActive="active">
+                <span class="glyphicon glyphicon-log-in"></span> Вход
+            </a>
+            <a routerLink="/register" class="btn btn-success pull-right" routerLinkActive="active">Регистрация</a>
         </div>
     </div>
 </div>

@@ -17,6 +17,10 @@ export class AppService {
 
         return this.http
             .post('/api/register', JSON.stringify(user), {headers})
-            .map((res: Response) => res.json().data);
+            .map((res: Response) => res.json().data)
+            .catch((err) => {
+                console.log('service err', err);
+                return Observable.throw(err);
+            });
     }
 }
