@@ -34,5 +34,3 @@ db.on('open', function() {
 });
 
 db.on('error', (err) => logger.error( [{ title: 'Mongodb connect', message: err.message }] ));
-
-console.log('Hello World!!!');
