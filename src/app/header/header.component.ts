@@ -3,8 +3,8 @@ import { Router } from '@angular/router';
 
 @Component({
     selector: 'header',
-    templateUrl: './template.html',
-    styleUrls: ['./styles.scss']
+    templateUrl: './header.template.html',
+    styleUrls: ['./header.styles.scss']
 })
 
 export class HeaderComponent {
