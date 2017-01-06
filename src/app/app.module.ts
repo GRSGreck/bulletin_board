@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule }  from '@angular/platform-browser';
 import { HttpModule } from '@angular/http';
-import { Routes, RouterModule } from '@angular/router';
 
 // App modules
 import { UserModule } from './user/user.module';
@@ -12,12 +11,7 @@ import { AppComponent } from './app.component';
 import { HeaderComponent } from "./header/header.component";
 import { HomeComponent } from './home/home.component';
 import { NotFoundComponent } from './errors/not-found/not-found.component';
-
-const appRoutes: Routes = [
-    { path: '', component: HomeComponent},
-    { path: '**', component: NotFoundComponent }
-    // { path: '**', redirectTo: '/' }
-];
+import { AppRoutingModule } from './app.routing';
 
 @NgModule({
     imports: [
@@ -28,7 +22,7 @@ const appRoutes: Routes = [
         // App modules
         UserModule,
 
-        RouterModule.forRoot(appRoutes)
+        AppRoutingModule
     ],
     declarations: [
         AppComponent,
@@ -39,4 +33,5 @@ const appRoutes: Routes = [
     providers: [ AppService ],
     bootstrap: [ AppComponent ]
 })
+
 export class AppModule { }

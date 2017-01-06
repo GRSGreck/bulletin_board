@@ -6,18 +6,14 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UserService } from './user.service';
 import { RegisterComponent } from './register/register.component';
 import { LoginComponent } from './login/login.component';
-
-const userRouter = [
-    { path: 'register', component: RegisterComponent },
-    { path: 'login', component: LoginComponent }
-];
+import { UserRoutingModule } from './user.routing';
 
 @NgModule({
     imports: [
         CommonModule,
         FormsModule,
         ReactiveFormsModule,
-        RouterModule.forChild(userRouter)
+        UserRoutingModule
     ],
     declarations: [
         RegisterComponent,
