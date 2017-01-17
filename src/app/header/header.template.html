@@ -1,13 +1,13 @@
 <div class="header container-fluid box-shadow">
     <div class="container">
         <div class="row">
-            <span class="logo">
+            <a routerLink="/" class="logo">
                 <span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span>
                 <span class="glyphicon logo-text">BulletinBoard</span>
-            </span>
-            <button type="button" class="btn btn-link pull-right" (click)="goHome()">
+            </a>
+            <!--<button type="button" class="btn btn-link pull-right" (click)="goHome()">
                 <span class="glyphicon glyphicon-log-out"></span> Выход
-            </button>
+            </button>-->
             <a routerLink="/login" class="btn btn-link pull-right" routerLinkActive="active">
                 <span class="glyphicon glyphicon-log-in"></span> Вход
             </a>

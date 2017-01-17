@@ -43,7 +43,7 @@ export class RegisterComponent extends FormValidationAbstract {
         this.userService.registeredUser(user)
             .subscribe(
                 user => console.log('user:', user),
-                err => console.error(err)
+                err => console.error('Error:', err)
             );
     }
 }

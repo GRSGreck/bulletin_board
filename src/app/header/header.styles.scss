@@ -8,8 +8,8 @@
   padding-top: 10px;
   padding-bottom: 10px;
 
-  & span.logo {
-    cursor: pointer;
+  & a.logo {
+    text-decoration: none;
 
     & > span {
       color: $logo-bg;

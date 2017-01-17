@@ -128,7 +128,7 @@ scripts:
   carousel: flase
   collapse: flase
   dropdown: flase
-  modal: flase
+  modal: false
   tooltip: flase
   popover: flase
   scrollspy: flase
