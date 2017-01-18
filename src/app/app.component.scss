@@ -1,6 +1,6 @@
-@import '~bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss';
-@import 'src/public/styles/bootstrap-variables.scss';
-@import 'src/public/styles/app-variables.scss';
+@import '~bootstrap-sass/assets/stylesheets/bootstrap/_variables';
+@import 'src/public/styles/bootstrap/_bootstrap-variables';
+@import 'src/public/styles/_app-variables';
 
 h1 {
   font-size: $font-size;

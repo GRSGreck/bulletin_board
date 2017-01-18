@@ -13,5 +13,5 @@ import 'rxjs';
 // You can import js, ts, css, sass, ...
 
 // Bootstrap
-import 'jquery';
-import 'bootstrap-loader';
+// import 'jquery';
+// import 'bootstrap-loader';
