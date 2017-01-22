@@ -42,7 +42,7 @@ module.exports = {
             },
             {
                 test: /\.scss$/,
-                exclude: helpers.root('src', 'app'),
+                include: helpers.root('src', 'public', 'styles'),
                 loader: ExtractTextPlugin.extract(
                     'style-loader',
                     ['css-loader', 'postcss-loader', 'sass-loader?sourceMap'].join('!')
