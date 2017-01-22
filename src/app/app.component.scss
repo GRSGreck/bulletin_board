@@ -1,10 +1,7 @@
-@import 'src/public/styles/bootstrap/_bootstrap-variables';
-@import 'src/public/styles/_app-variables';
-
 h1 {
-  font-size: $font-size;
+  font-size: 1rem;
   color: #fff;
-  background: $brand-danger;
+  background: #fff;
 }
 
 #wrapper {

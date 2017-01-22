@@ -1,24 +1,21 @@
-@import "~bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss";
-@import 'src/public/styles/bootstrap-variables.scss';
-@import 'src/public/styles/app-variables.scss';
+@import "src/public/styles/bootstrap/_bootstrap-variables";
+@import 'src/public/styles/_app-variables';
 
 .header {
   box-shadow: $box-shadow;
   background: $gray-lighter;
   padding-top: 10px;
   padding-bottom: 10px;
+  position: relative;
 
   & a.logo {
     text-decoration: none;
-
-    & > span {
-      color: $logo-bg;
-      font-size: 45px;
-      line-height: 45px;
-
-      &.logo-text {
-        font-size: 3.9rem;
-      }
-    }
+    box-shadow: $box-shadow;
+    border-radius: (75px/2);
+    width: 75px;
+    height: 75px;
+    display: block;
+    position: absolute;
+    bottom: -28px;
   }
 }

@@ -36,11 +36,6 @@ module.exports = {
                 loader: 'url-loader?name=assets/[name].[hash].[ext]&limit=5000'
             },
             {
-                test: /\.(woff2?|ttf|eot|svg)$/,
-                exclude: helpers.root('src'),
-                loader: 'url-loader?name=assets/[name].[hash].[ext]&limit=10000'
-            },
-            {
                 test: /\.scss$/,
                 include: helpers.root('src', 'public', 'styles'),
                 loader: ExtractTextPlugin.extract(
@@ -72,7 +67,9 @@ module.exports = {
         }),
 
         new HtmlWebpackPlugin({
-            template: './index.html'
+            template: './index.html',
+            favicon: helpers.root('src', 'favicon.png')/*,
+            hash: true*/
         })
     ]
 };

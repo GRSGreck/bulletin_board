@@ -4,3 +4,7 @@
 * {
     box-sizing: border-box;
 }
+
+a.btn.btn-link:focus {
+    box-shadow: none;
+}
