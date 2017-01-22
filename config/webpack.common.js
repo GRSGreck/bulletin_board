@@ -25,7 +25,6 @@ module.exports = {
                 include: helpers.root('src'),
                 loaders: ['awesome-typescript-loader', 'angular2-template-loader']
             },
-            { test: /bootstrap-sass\/assets\/javascripts\//, loader: 'imports-loader?jQuery=jquery' },
             {
                 test: /\.html$/,
                 include: helpers.root('src'),
@@ -43,7 +42,7 @@ module.exports = {
             },
             {
                 test: /\.scss$/,
-                exclude: helpers.root('src', 'app'),
+                include: helpers.root('src', 'public', 'styles'),
                 loader: ExtractTextPlugin.extract(
                     'style-loader',
                     ['css-loader', 'postcss-loader', 'sass-loader?sourceMap'].join('!')
@@ -70,12 +69,6 @@ module.exports = {
     plugins: [
         new webpack.optimize.CommonsChunkPlugin({
             names: ['app', 'vendor', 'polyfills']
-        }),
-
-        new webpack.ProvidePlugin({
-            jQuery: 'jquery',
-            $: 'jquery',
-            jquery: 'jquery'
         }),
 
         new HtmlWebpackPlugin({

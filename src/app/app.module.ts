@@ -12,6 +12,7 @@ import { HeaderComponent } from "./header/header.component";
 import { HomeComponent } from './home/home.component';
 import { NotFoundComponent } from './errors/not-found/not-found.component';
 import { AppRoutingModule } from './app.routing';
+import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 
 @NgModule({
     imports: [
@@ -22,7 +23,8 @@ import { AppRoutingModule } from './app.routing';
         // App modules
         UserModule,
 
-        AppRoutingModule
+        AppRoutingModule,
+        NgbModule.forRoot()
     ],
     declarations: [
         AppComponent,
