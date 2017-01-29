@@ -1,11 +1,11 @@
-import {Component, ViewChild} from '@angular/core';
+import {Component} from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
-import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
-import * as _ from 'lodash';
+import {NgbModal, ModalDismissReasons, NgbModalRef} from '@ng-bootstrap/ng-bootstrap';
 
 import { FormValidationAbstract } from '../shared/form-validation.abstract';
 import { UserService } from "../user.service";
 import { User } from '../shared/user.model';
+import {NgbdModalContent} from "../modal/modal.content";
 
 @Component({
     selector: 'form-register',
@@ -16,11 +16,6 @@ import { User } from '../shared/user.model';
 export class RegisterComponent extends FormValidationAbstract {
     formRegister: FormGroup;
     closeResult: string;
-    invalidErrors: string[] = [];
-    successRegisterMessage: string = '';
-
-    @ViewChild('modalContent')
-    modalContent: HTMLElement;
 
     constructor(
         private fb: FormBuilder,
@@ -46,39 +41,43 @@ export class RegisterComponent extends FormValidationAbstract {
     }
 
     public onSubmit(): void {
-        let user = this.formRegister.value;
+        let user: User = this.formRegister.value;
 
         this.userService.registeredUser(user)
             .subscribe(
                 user => {
-                    this.successRegisterMessage = 'Регистрация пользователя успешно завершена!';
-                    this.open(this.modalContent);
+                    console.log('User:', user);
+
+                    let modalRef = this.open(NgbdModalContent);
+                    modalRef.componentInstance.successMessage = 'Регистрация пользователя успешно завершена!';
                 },
                 err => {
-                    this.invalidErrors = this._getError(err);
-                    this.open(this.modalContent);
+                    let modalRef = this.open(NgbdModalContent);
+                    modalRef.componentInstance.invalidErrors = this._getError(err);
                 }
             );
     }
 
-    private _getError(err: Object): string[] {
-        let errors = JSON.parse(err['_body']);
-        return <string[]>_.map(errors, 'message');
+    private _getError(err: Object): Object[] {
+        return JSON.parse(err['_body']);
     }
 
-    private open(content: any) {
-        this.modalService.open(content).result.then(
+    private open(content: any): NgbModalRef {
+        let modalRef = this.modalService.open(content);
+
+        modalRef.result.then(
             result => {
-                // console.log('Result:', result);
                 this.closeResult = `Closed with: ${result}`;
                 console.log('close result_1:', this.closeResult);
-
             },
             reason => {
-                // console.log('reason:', reason);
                 this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
                 console.log('close result_2:', this.closeResult);
             });
+
+        modalRef.componentInstance.modalTitle = 'Регистрация';
+
+        return modalRef;
     }
 
     private getDismissReason(reason: any): string {
@@ -87,7 +86,7 @@ export class RegisterComponent extends FormValidationAbstract {
         } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
             return 'by clicking on a backdrop';
         } else {
-            return  `with: ${reason}`;
+            return `with: ${reason}`;
         }
     }
 }

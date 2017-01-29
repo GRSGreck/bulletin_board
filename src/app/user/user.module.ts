@@ -1,12 +1,15 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
+
+import { UserRoutingModule } from './user.routing';
 
 import { UserService } from './user.service';
 import { RegisterComponent } from './register/register.component';
 import { LoginComponent } from './login/login.component';
-import { UserRoutingModule } from './user.routing';
-import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
+import { NgbdModalContent } from "./modal/modal.content";
+import {MeComponent} from "./me/me.component";
 
 @NgModule({
     imports: [
@@ -18,8 +21,11 @@ import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
     ],
     declarations: [
         RegisterComponent,
-        LoginComponent
+        LoginComponent,
+        NgbdModalContent,
+        MeComponent
     ],
+    entryComponents: [NgbdModalContent],
     providers: [UserService]
 })
 

@@ -12,6 +12,9 @@ module.exports = function Auth() {
     };
 
     this.login = function(req, res, next) {
+        if ( !_.isString(req.body.email) ) req.body.email = req.body.email.toString();
+        req.body.email = req.body.email.trim().toLowerCase();
+
         passport.authenticate('local', function (err, user, info) {
             if (err) {
                 err.status = 422;

@@ -13,14 +13,20 @@ export class UserService {
 
         headers.append('Content-Type', 'application/json');
 
-        console.log('headers', headers);
-
         return this.http
             .post('/api/register', JSON.stringify(user), {headers})
             .map((res: Response) => res.json().data)
-            .catch((err: Response) => {
-                console.log('service err', err);
-                return Observable.throw(err);
-            });
+            .catch((err: Response) => Observable.throw(err));
+    }
+
+    loginUser(loginField: Object): Observable<any> {
+        let headers = new Headers();
+
+        headers.append('Content-Type', 'application/json');
+
+        return this.http
+            .post('/api/login', JSON.stringify(loginField), {headers})
+            .map((res: Response) => res.json().data)
+            .catch((err: Response) => Observable.throw(err));
     }
 }
