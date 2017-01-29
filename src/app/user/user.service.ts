@@ -18,7 +18,7 @@ export class UserService {
         return this.http
             .post('/api/register', JSON.stringify(user), {headers})
             .map((res: Response) => res.json().data)
-            .catch((err) => {
+            .catch((err: Response) => {
                 console.log('service err', err);
                 return Observable.throw(err);
             });

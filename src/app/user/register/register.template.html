@@ -1,11 +1,11 @@
 <div class="container">
     <div class="row">
-        <div class="col">
+        <div class="col-12 col-sm-12 col-md-8 col-lg-6 mx-auto">
             <h2 class="text-center">Регистрация</h2>
             <form class="form-horizontal" [formGroup]="formRegister" novalidate (ngSubmit)="onSubmit()">
                 <div class="form-group" [ngClass]="{ 'has-error': isInvalid(getFormControl('email')), 'has-success': isValid(getFormControl('email')) }">
                     <label for="email">Email*</label>
-                    <div class="col-lg-6">
+                    <div>
                         <input type="email" formControlName="email" class="form-control" id="email" placeholder="Email">
                         <div class="alert alert-danger" *ngIf="isInvalid(getFormControl('email'))">
                             <span *ngFor="let error of getInvalidFields(getFormControl('email'))" class="help-block">{{ error }}</span>
@@ -14,7 +14,7 @@
                 </div>
                 <div class="form-group" [ngClass]="{ 'has-error': isInvalid(getFormControl('password')), 'has-success': isValid(getFormControl('password')) }">
                     <label for="password">Пароль*</label>
-                    <div class="col-lg-6">
+                    <div>
                         <input type="password" formControlName="password" class="form-control" id="password" placeholder="Пароль">
                         <div class="alert alert-danger" *ngIf="isInvalid(getFormControl('password'))">
                             <span *ngFor="let error of getInvalidFields(getFormControl('password'))" class="help-block">{{ error }}</span>
@@ -23,7 +23,7 @@
                 </div>
                 <div class="form-group" [ngClass]="{ 'has-error': isInvalid(getFormControl('name')), 'has-success': isValid(getFormControl('name')) }">
                     <label for="name">Имя*</label>
-                    <div class="col-lg-6">
+                    <div>
                         <input type="text" formControlName="name" class="form-control" id="name" placeholder="Имя">
                         <div class="alert alert-danger" *ngIf="isInvalid(getFormControl('name'))">
                             <span *ngFor="let error of getInvalidFields(getFormControl('name'))" class="help-block">{{ error }}</span>
@@ -32,7 +32,7 @@
                 </div>
                 <div class="form-group" [ngClass]="{ 'has-error': isInvalid(getFormControl('phone')), 'has-success': isValid(getFormControl('phone')) }">
                     <label for="phone">Телефон</label>
-                    <div class="col-lg-6">
+                    <div>
                         <input type="text" formControlName="phone" class="form-control" id="phone" placeholder="Телефон">
                         <div class="alert alert-danger" *ngIf="isInvalid(getFormControl('phone'))">
                             <span *ngFor="let error of getInvalidFields(getFormControl('phone'))" class="help-block">{{ error }}</span>
@@ -46,9 +46,27 @@
                     </div>
                 </div>
             </form>
+            <div class="col">
+                <p>{{ formRegister.value | json }}</p>
+            </div>
         </div>
-        <!--<div class="col">-->
-            <!--<p>{{ formRegister.value | json }}</p>-->
-        <!--</div>-->
     </div>
 </div>
+
+<template #modalContent let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title">Modal title</h4>
+        <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <ol *ngIf="invalidErrors.length">
+            <li class="alert alert-danger" *ngFor="let error of invalidErrors">{{ error }}</li>
+        </ol>
+        <p *ngIf="successRegisterMessage" class="alert alert-success">{{ successRegisterMessage }}</p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="c('Close click')">Close</button>
+    </div>
+</template>
