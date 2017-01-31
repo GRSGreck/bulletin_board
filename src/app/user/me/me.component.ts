@@ -9,11 +9,12 @@ import {AppService} from "../../app.service";
 
 export class MeComponent implements OnInit {
     constructor(private appService: AppService) {
+        console.log('R this.appService.currentUser', this.appService.currentUser);
 
     }
 
     ngOnInit() {
-        this.appService.getCurrentUser();
+        // this.appService.getCurrentUser();
         console.log(this.appService.currentUser);
     }
 }

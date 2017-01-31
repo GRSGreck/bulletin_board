@@ -45,7 +45,7 @@ export class UserService {
     public fetchCurrentUser(): Observable<User> {
         return this.http
             .get('/api/me')
-            .map((res) => res.json || {})
+            .map((res) => res.json() || {})
             .catch((err) => Observable.throw(err));
     }
 }
