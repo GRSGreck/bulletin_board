@@ -29,7 +29,7 @@ module.exports = function Auth() {
                 user = _.omit(user.toObject(), ['__v', 'password']);
                 logger.info(`User (id: ${ user._id }) is logged!`);
 
-                return res.status(200).json(user);
+                return res.status(200).end();
             });
 
         })(req, res, next);
@@ -57,7 +57,6 @@ module.exports = function Auth() {
                     return next(err);
                 }
 
-
                 logger.info(`New user successfully registered:\n${user}`);
 
                 req.logIn(user, function (err) {
@@ -66,7 +65,7 @@ module.exports = function Auth() {
                     user = _.omit(user.toObject(), ['__v', 'password']);
                     logger.info(`User (id: ${ user._id }) is logged!`);
 
-                    return res.status(200).json(user);
+                    return res.status(200).end();
                 });
             });
         });
@@ -74,6 +73,6 @@ module.exports = function Auth() {
 
     this.logout = function (req, res, next) {
         req.logout();
-        res.redirect('/');
+        res.status(200).end();
     };
 };

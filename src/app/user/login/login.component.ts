@@ -1,4 +1,5 @@
 import {Component} from '@angular/core';
+import {Router} from "@angular/router";
 import {FormGroup, FormBuilder, Validators, FormControl} from '@angular/forms';
 import {NgbModal, ModalDismissReasons, NgbModalRef} from "@ng-bootstrap/ng-bootstrap";
 
@@ -19,7 +20,8 @@ export class LoginComponent extends FormValidationAbstract {
     constructor(
         private fb: FormBuilder,
         private userService: UserService,
-        private modalService: NgbModal
+        private modalService: NgbModal,
+        private router: Router
     ) {
         super();
 
@@ -39,14 +41,14 @@ export class LoginComponent extends FormValidationAbstract {
 
     public onSubmit(): void {
         let user = this.formLogin.value;
+        let self = this;
 
         this.userService.loginUser(user)
             .subscribe(
-                user => {
-                    // console.log('User:', user);
+                function (res) {
+                    console.log('login user:', res);
 
-                    let modalRef = this.open(NgbdModalContent);
-                    modalRef.componentInstance.successMessage = 'Вход пользователя успешно завершен!';
+                    self.router.navigate(['/me']);
                 },
                 err => {
                     let modalRef = this.open(NgbdModalContent);

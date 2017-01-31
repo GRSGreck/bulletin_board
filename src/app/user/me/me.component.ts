@@ -1,4 +1,5 @@
 import {Component, OnInit} from '@angular/core';
+import {AppService} from "../../app.service";
 
 @Component({
     selector: 'me',
@@ -7,7 +8,12 @@ import {Component, OnInit} from '@angular/core';
 })
 
 export class MeComponent implements OnInit {
-    constructor() {}
+    constructor(private appService: AppService) {
 
-    ngOnInit() {}
+    }
+
+    ngOnInit() {
+        this.appService.getCurrentUser();
+        console.log(this.appService.currentUser);
+    }
 }

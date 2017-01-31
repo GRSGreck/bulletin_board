@@ -6,6 +6,7 @@ import { FormValidationAbstract } from '../shared/form-validation.abstract';
 import { UserService } from "../user.service";
 import { User } from '../shared/user.model';
 import {NgbdModalContent} from "../modal/modal.content";
+import {Router} from "@angular/router";
 
 @Component({
     selector: 'form-register',
@@ -20,7 +21,8 @@ export class RegisterComponent extends FormValidationAbstract {
     constructor(
         private fb: FormBuilder,
         private userService: UserService,
-        private modalService: NgbModal
+        private modalService: NgbModal,
+        private router: Router
     ){
         super();
 
@@ -42,14 +44,13 @@ export class RegisterComponent extends FormValidationAbstract {
 
     public onSubmit(): void {
         let user: User = this.formRegister.value;
+        let self = this;
 
         this.userService.registeredUser(user)
             .subscribe(
-                user => {
-                    console.log('User:', user);
-
-                    let modalRef = this.open(NgbdModalContent);
-                    modalRef.componentInstance.successMessage = 'Регистрация пользователя успешно завершена!';
+                function (res) {
+                    console.log('Register user:', res);
+                    self.router.navigate(['/me']);
                 },
                 err => {
                     let modalRef = this.open(NgbdModalContent);

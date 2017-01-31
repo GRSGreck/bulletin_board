@@ -6,12 +6,8 @@ const errors = require('../errors');
 const _ = require('lodash');
 
 module.exports = function Me() {
-    this.getCurrentUser = function(req, res, next) {
-        if (!req.decoded) return;
-        
-        let user = _.omit(req.decoded._doc, 'password', '__v');
-
-        logger.debug('Get current user, success:', user);
+    this.getMe = function(req, res, next) {
+        let user = _.omit(req.user.toObject(), 'password', '__v');
         res.status(200).json(user);
     };
 
