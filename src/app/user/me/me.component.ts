@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {AppService} from "../../app.service";
+import {UserService} from "../user.service";
 
 @Component({
     selector: 'me',
@@ -7,14 +7,10 @@ import {AppService} from "../../app.service";
     styleUrls: ['./me.styles.scss']
 })
 
-export class MeComponent implements OnInit {
-    constructor(private appService: AppService) {
-        console.log('R this.appService.currentUser', this.appService.currentUser);
-
-    }
+export class MeComponent implements OnInit{
+    constructor(private userService: UserService) {}
 
     ngOnInit() {
-        // this.appService.getCurrentUser();
-        console.log(this.appService.currentUser);
+        console.log('R me:', this.userService.getCurrentUser());
     }
 }

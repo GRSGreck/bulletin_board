@@ -43,14 +43,10 @@ export class LoginComponent extends FormValidationAbstract {
         let user = this.formLogin.value;
         let self = this;
 
-        this.userService.loginUser(user)
+        this.userService.login(user)
             .subscribe(
-                function (res) {
-                    console.log('login user:', res);
-
-                    self.router.navigate(['/me']);
-                },
-                err => {
+                (res) => self.router.navigate(['/me']),
+                (err) => {
                     let modalRef = this.open(NgbdModalContent);
                     modalRef.componentInstance.invalidErrors = this._getError(err);
                 }

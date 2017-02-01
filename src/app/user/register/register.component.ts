@@ -46,7 +46,7 @@ export class RegisterComponent extends FormValidationAbstract {
         let user: User = this.formRegister.value;
         let self = this;
 
-        this.userService.registeredUser(user)
+        this.userService.create(user)
             .subscribe(
                 function (res) {
                     console.log('Register user:', res);

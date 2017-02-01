@@ -5,8 +5,11 @@ import { HttpModule } from '@angular/http';
 // App modules
 import { UserModule } from './user/user.module';
 
-// App components
+// Services
 import { AppService } from "./app.service";
+import {ConstService} from "./core/const.service";
+
+// App components
 import { AppComponent } from './app.component';
 import { HeaderComponent } from "./header/header.component";
 import { HomeComponent } from './home/home.component';
@@ -32,7 +35,7 @@ import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
         HomeComponent,
         NotFoundComponent
     ],
-    providers: [ AppService ],
+    providers: [ AppService, ConstService ],
     bootstrap: [ AppComponent ]
 })
 

@@ -29,7 +29,7 @@ module.exports = function Auth() {
                 user = _.omit(user.toObject(), ['__v', 'password']);
                 logger.info(`User (id: ${ user._id }) is logged!`);
 
-                return res.status(200).end();
+                return res.status(200).json(user);
             });
 
         })(req, res, next);
@@ -65,7 +65,7 @@ module.exports = function Auth() {
                     user = _.omit(user.toObject(), ['__v', 'password']);
                     logger.info(`User (id: ${ user._id }) is logged!`);
 
-                    return res.status(200).end();
+                    return res.status(200).json(user);
                 });
             });
         });

@@ -3,11 +3,8 @@
         <div class="row">
             <div class="col">
                 <a routerLink="/" class="logo" title="Home"><img src="./img/whiteboard.svg" alt="Logo"></a>
-                <!--<button type="button" class="btn btn-link pull-right" (click)="goHome()">
-                    <span class="glyphicon glyphicon-log-out"></span> Выход
-                </button>-->
-                <a routerLink="/login" class="btn btn-link float-right" routerLinkActive="active">Вход</a>
-                <button class="btn btn-link float-right" (click)="getLogout()">Выход</button>
+                <a *ngIf="!isLoggedIn" routerLink="/login" class="btn btn-link float-right" routerLinkActive="active">Вход</a>
+                <button *ngIf="isLoggedIn" class="btn btn-link float-right" (click)="getLogout()">Выход</button>
                 <a routerLink="/register" class="btn btn-success float-right" routerLinkActive="active">Регистрация</a>
             </div>
         </div>
