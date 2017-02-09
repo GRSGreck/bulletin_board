@@ -3,19 +3,32 @@ import { Headers, Http, Response } from '@angular/http';
 import { Observable } from 'rxjs';
 
 import { User } from './shared/user.model';
-import {ConstService} from "../core/const.service";
 
 @Injectable()
 
 export class UserService {
-    private _loggedIn: boolean = false;
     private _loggedInChange: EventEmitter<any> = new EventEmitter();
+    private _loggedIn: boolean = false;
+    private _currentUser: User = null;
 
-    constructor(
-        private http: Http,
-        private constService: ConstService
-    ){
-        this._loggedIn = !!localStorage.getItem( this.constService.CURRENT_USER );
+    constructor(private http: Http){}
+
+    public load(): Promise<any> {
+        return new Promise((resolve, reject) => {
+
+            this._getCurrentUser().subscribe(
+                (user: User) => {
+                    this._setCurrentUser(user);
+                    this._setLoggedIn(true);
+                    resolve(true);
+                },
+                (err) => {
+                    err.status === 401 ? resolve(err) : reject(err);
+                    return Observable.throw(err);
+                }
+            );
+
+        });
     }
 
     public create(user: User): Observable<User> {
@@ -28,7 +41,9 @@ export class UserService {
             .map((res: Response) => new User( res.json() ))
             .map((user: User) => {
                 this._setCurrentUser(user);
+                this._setLoggedIn(true);
                 this._emitLoggedInChangeEvent();
+
                 return { success: 'login' };
             })
             .catch((err: Response) => Observable.throw(err));
@@ -44,8 +59,10 @@ export class UserService {
             .map((res: Response) => new User( res.json() ))
             .map((user: User) => {
                 this._setCurrentUser(user);
+                this._setLoggedIn(true);
                 this._emitLoggedInChangeEvent();
-                return { success: 'login' };
+
+                return user;
             })
             .catch((err: Response) => Observable.throw(err));
     }
@@ -54,10 +71,21 @@ export class UserService {
         return this.http
             .get('/api/logout')
             .map((res: Response) => {
-                this._removeCurrentUsser();
+                this._removeCurrentUser();
                 this._emitLoggedInChangeEvent();
-                return res;
+
+                return 'Logout user!';
             })
+            .catch((err: Response) => Observable.throw(err));
+    }
+
+    private _getCurrentUser(): Observable<User> {
+        let headers = new Headers();
+        headers.append('Content-Type', 'application/json');
+
+        return this.http
+            .get('/api/me')
+            .map((res: Response) => new User( res.json() ))
             .catch((err: Response) => Observable.throw(err));
     }
 
@@ -65,18 +93,21 @@ export class UserService {
         return this._loggedIn;
     }
 
-    public getCurrentUser(): User {
-        return JSON.parse(localStorage.getItem( this.constService.CURRENT_USER ));
+    public _setLoggedIn(isLoggedIn: boolean): void {
+        this._loggedIn = isLoggedIn;
     }
 
     private _setCurrentUser(user: User): void {
-        localStorage.setItem(this.constService.CURRENT_USER, JSON.stringify(user));
-        this._loggedIn = true;
+        this._currentUser = user;
     }
 
-    private _removeCurrentUsser(): void {
-        localStorage.removeItem( this.constService.CURRENT_USER );
-        this._loggedIn = false;
+    private _removeCurrentUser(): void {
+        this._setCurrentUser(null);
+        this._setLoggedIn(false);
+    }
+
+    public getCurrentUser(): User {
+        return this._currentUser;
     }
 
     private _emitLoggedInChangeEvent(): void {

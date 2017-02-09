@@ -2,6 +2,7 @@ import {Component, OnInit, OnDestroy} from '@angular/core';
 import { Router } from '@angular/router';
 
 import {UserService} from "../user/user.service";
+import {User} from "../user/shared/user.model";
 
 @Component({
     selector: 'header',
@@ -12,29 +13,29 @@ import {UserService} from "../user/user.service";
 export class HeaderComponent implements OnInit, OnDestroy {
     isLoggedIn: boolean = false;
     subscription: any;
+    currentUser: User;
 
     constructor(
         private router: Router,
-        private userService: UserService
+        private userService: UserService,
     ) {
 
     }
 
     ngOnInit(): void {
+        this.currentUser = this.userService.getCurrentUser();
         this.isLoggedIn = this.userService.isLoggedIn();
 
         this.subscription = this.userService.getLoggedInChange().subscribe(
-            () => this.isLoggedIn = this.userService.isLoggedIn()
+            () => {
+                this.isLoggedIn = this.userService.isLoggedIn();
+                this.currentUser = this.userService.getCurrentUser();
+            }
         );
     }
 
     ngOnDestroy(): void {
         this.subscription.unsubscribe();
-    }
-
-    public goHome(): void {
-        this.router.navigate(['/']);
-        // this.router.navigate(['/', 5], { queryParams: { age: 25, gender: 'male' } });
     }
 
     public getLogout(): void {

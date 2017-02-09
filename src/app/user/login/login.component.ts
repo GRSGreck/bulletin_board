@@ -63,11 +63,9 @@ export class LoginComponent extends FormValidationAbstract {
         modalRef.result.then(
             result => {
                 this.closeResult = `Closed with: ${result}`;
-                console.log('close result_1:', this.closeResult);
             },
             reason => {
                 this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-                console.log('close result_2:', this.closeResult);
             });
 
         modalRef.componentInstance.modalTitle = 'Регистрация';
