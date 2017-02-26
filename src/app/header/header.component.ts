@@ -40,7 +40,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     public getLogout(): void {
         this.userService.logout().subscribe(
-            (res) => console.log(res),
+            (res) => {
+                this.router.navigate(['/login']);
+                console.log(res)
+            },
             (err) => console.error(err)
         );
     }

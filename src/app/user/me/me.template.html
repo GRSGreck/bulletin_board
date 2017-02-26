@@ -1,1 +1,21 @@
-<h1>Hello Me Component</h1>
+<div class="container">
+    <div class="row">
+        <div class="avatar col-md-4 col-lg-3">
+            <img src="../../../public/img/avatar_default.svg" title="{{ currentUser.name }}" alt="{{ currentUser.name }}" class="avatar img-thumbnail">
+            <div><a routerLink="/me/edit/profile" class="btn btn-secondary">Редактировать</a></div>
+        </div>
+        <div class="col-md-8 col-lg-9">
+            <h3>{{ currentUser.name }}</h3>
+            <div class="me-info clearfix">
+                <div class="label-info">Email:</div>
+                <div class="labeled-info">
+                    <a href="mailto:{{ currentUser.email }}">{{ currentUser.email }}</a>
+                </div>
+            </div>
+            <div class="me-info clearfix">
+                <div class="label-info">Телефон:</div>
+                <div class="labeled-info">{{ currentUser.phone }}</div>
+            </div>
+        </div>
+    </div>
+</div>

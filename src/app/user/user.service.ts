@@ -31,7 +31,7 @@ export class UserService {
         });
     }
 
-    public create(user: User): Observable<User> {
+    public create(user: User): Observable<any> {
         let headers = new Headers();
 
         headers.append('Content-Type', 'application/json');
@@ -45,6 +45,33 @@ export class UserService {
                 this._emitLoggedInChangeEvent();
 
                 return { success: 'login' };
+            })
+            .catch((err: Response) => Observable.throw(err));
+    }
+
+    private _getCurrentUser(): Observable<User> {
+        let headers = new Headers();
+        headers.append('Content-Type', 'application/json');
+
+        return this.http
+            .get('/api/me')
+            .map((res: Response) => new User( res.json() ))
+            .catch((err: Response) => Observable.throw(err));
+    }
+
+    public editCurrentUser(user: User): Observable<any> {
+        let headers = new Headers();
+
+        headers.append('Content-Type', 'application/json');
+
+        console.log('R editCurrentUser:', user);
+
+        return this.http
+            .put('/api/me', JSON.stringify(user), {headers})
+            .map((res: Response) => {
+                let user = new User (res.json());
+                this._setCurrentUser(user);
+                this._emitLoggedInChangeEvent();
             })
             .catch((err: Response) => Observable.throw(err));
     }
@@ -76,16 +103,6 @@ export class UserService {
 
                 return 'Logout user!';
             })
-            .catch((err: Response) => Observable.throw(err));
-    }
-
-    private _getCurrentUser(): Observable<User> {
-        let headers = new Headers();
-        headers.append('Content-Type', 'application/json');
-
-        return this.http
-            .get('/api/me')
-            .map((res: Response) => new User( res.json() ))
             .catch((err: Response) => Observable.throw(err));
     }
 

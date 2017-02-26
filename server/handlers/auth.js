@@ -4,6 +4,7 @@ const IdCountersModel = require('../models/idCounters');
 const logger = require('../libs/logger')(module);
 const UserModel = require('../models/user');
 const passport = require('passport');
+const colors = require('colors');
 const _ = require('lodash');
 
 module.exports = function Auth() {
@@ -12,13 +13,14 @@ module.exports = function Auth() {
     };
 
     this.login = function(req, res, next) {
+        if (!req.body.email) return res.status(400).end();
+
         if ( !_.isString(req.body.email) ) req.body.email = req.body.email.toString();
         req.body.email = req.body.email.trim().toLowerCase();
 
         passport.authenticate('local', function (err, user, info) {
             if (err) {
                 err.status = 422;
-
                 return next(err);
             }
             if (!user) return res.status(422).json([{ field: 'email', message: 'Wrong email or password' }]);
@@ -27,7 +29,7 @@ module.exports = function Auth() {
                 if (err) return next(err);
 
                 user = _.omit(user.toObject(), ['__v', 'password']);
-                logger.info(`User (id: ${ user._id }) is logged!`);
+                logger.info(`User (id: ${ user._id }) is logged!`.green);
 
                 return res.status(200).json(user);
             });
@@ -53,17 +55,16 @@ module.exports = function Auth() {
             new UserModel(req.body).save((err, user) => {
                 if (err) {
                     err.status = 422;
-
                     return next(err);
                 }
 
-                logger.info(`New user successfully registered:\n${user}`);
+                logger.info(`New user successfully registered:\n${user}`.green);
 
                 req.logIn(user, function (err) {
                     if (err) return next(err);
 
                     user = _.omit(user.toObject(), ['__v', 'password']);
-                    logger.info(`User (id: ${ user._id }) is logged!`);
+                    logger.info(`User (id: ${ user._id }) is logged!`.green);
 
                     return res.status(200).json(user);
                 });

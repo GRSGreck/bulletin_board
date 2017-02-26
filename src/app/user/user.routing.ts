@@ -1,22 +1,35 @@
-import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import {NgModule} from '@angular/core';
+import {Routes, RouterModule} from '@angular/router';
 
-import { RegisterComponent } from './register/register.component';
-import { LoginComponent } from './login/login.component';
-import {MeComponent} from "./me/me.component";
+// Guards
 import {AuthGuard} from "../core/guards/auth.guard";
+import {NotAuthGuard} from "../core/guards/not-auth.guard";
 
+// Components
+import {RegisterComponent} from './register/register.component';
+import {LoginComponent} from './login/login.component';
+import {MeComponent} from "./me/me.component";
+import {EditMeComponent} from "./me/edit/edit.component";
+import {ProfileComponent} from "./me/edit/profile/profile.component";
+import {ForgotPasswordComponent} from "./me/edit/forgot-password/forgot-password.component";
+import {ChangeEmailComponent} from "./me/edit/change-email/change-email.component";
 
 const routes: Routes = [
     { path: 'register', component: RegisterComponent, canActivate: [AuthGuard] },
     { path: 'login', component: LoginComponent, canActivate: [AuthGuard] },
-    { path: 'me', component: MeComponent }
+    { path: 'me', component: MeComponent, canActivate: [NotAuthGuard] },
+    { path: 'me/edit', redirectTo: '/me/edit/profile', pathMatch: 'full' },
+    { path: 'me/edit', component: EditMeComponent, canActivate: [NotAuthGuard], children: [
+        { path: 'profile', component: ProfileComponent },
+        { path: 'change-email', component: ChangeEmailComponent },
+        { path: 'forgot-password', component: ForgotPasswordComponent }
+    ]}
 ];
 
 @NgModule({
     imports: [RouterModule.forChild(routes)],
     exports: [RouterModule],
-    providers: [AuthGuard]
+    providers: [AuthGuard, NotAuthGuard]
 })
 
 export class UserRoutingModule { }

@@ -2,6 +2,7 @@
 
 const logger = require('../libs/logger')(module);
 const bodyParser = require('body-parser');
+const rootRouter = require('./root');
 const authRouter = require('./auth');
 const userRouter = require('./user');
 const itemRouter = require('./item');
@@ -11,23 +12,29 @@ const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const passport = require("passport");
 const session = require('express-session');
+const RedisStore = require('connect-redis')(session);
+const colors = require('colors');
+const _ = require('lodash');
 
 module.exports = function(app) {
     app.use(morgan('dev'));
     app.use(cookieParser());
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json());
+
     app.use(session({
+        store: new RedisStore({ host: '127.0.0.1', port: 6379 }),
         secret: process.env.SECRET,
         resave: false,
-        saveUninitialized: true
+        saveUninitialized: false
     }));
+
     app.use(passport.initialize());
     app.use(passport.session());
 
     require('../libs/passport')();
 
-    app.get('/', (req, res) => res.send(`Hello! The API is at http://localhost:${process.env.PORT}/api`));
+    app.use('', rootRouter);
     app.use('/api', authRouter);
     app.use('/api/me', meRouter);
     app.use('/api/user', userRouter);
@@ -64,7 +71,7 @@ module.exports = function(app) {
             }
         }
 
-        logger.error(resultArrErrors);
+        logger.error(JSON.stringify(resultArrErrors).red);
         res.status(err.status).json(resultArrErrors);
     });
 };

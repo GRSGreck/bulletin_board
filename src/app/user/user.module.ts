@@ -10,6 +10,10 @@ import { RegisterComponent } from './register/register.component';
 import { LoginComponent } from './login/login.component';
 import { NgbdModalContent } from "./modal/modal.content";
 import {MeComponent} from "./me/me.component";
+import {EditMeComponent} from "./me/edit/edit.component";
+import {ProfileComponent} from "./me/edit/profile/profile.component";
+import {ForgotPasswordComponent} from "./me/edit/forgot-password/forgot-password.component";
+import {ChangeEmailComponent} from "./me/edit/change-email/change-email.component";
 
 @NgModule({
     imports: [
@@ -23,7 +27,11 @@ import {MeComponent} from "./me/me.component";
         RegisterComponent,
         LoginComponent,
         NgbdModalContent,
-        MeComponent
+        MeComponent,
+        EditMeComponent,
+        ProfileComponent,
+        ForgotPasswordComponent,
+        ChangeEmailComponent
     ],
     entryComponents: [NgbdModalContent],
     providers: [UserService]

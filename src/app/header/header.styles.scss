@@ -1,6 +1,8 @@
 @import "src/public/styles/bootstrap/_bootstrap-variables";
 @import 'src/public/styles/_app-variables';
 
+$avatar_size: 38px;
+
 .header {
   box-shadow: $box-shadow;
   background: $gray-lighter;
@@ -9,7 +11,7 @@
   position: relative;
   margin-bottom: 50px;
 
-  & a.logo {
+  .logo {
     text-decoration: none;
     box-shadow: $box-shadow;
     border-radius: (75px/2);
@@ -18,5 +20,13 @@
     display: block;
     position: absolute;
     bottom: -28px;
+  }
+
+  .header-avatar {
+    width: $avatar_size;
+    height: $avatar_size;
+    background: #fff;
+    border-radius: $avatar_size / 2;
+    overflow: hidden;
   }
 }
