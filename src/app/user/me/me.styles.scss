@@ -1,3 +1,5 @@
+@import "../../../public/styles/_app-variables.scss";
+
 .avatar {
   img {
     height: 200px;
@@ -11,7 +13,7 @@
 
   .label-info {
     width: 120px;
-    color: #aba7a7;
+    color: $gray;
   }
 
   div {

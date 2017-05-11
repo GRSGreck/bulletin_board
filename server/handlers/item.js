@@ -169,7 +169,7 @@ module.exports = function Item() {
                 if (item.user_id !== req.decoded._doc._id) return res.status(403).json();
 
                 mw.uploadFile(req, res, function(err) {
-                    if (err) return next( new errors.HttpError(422, err.message, 'image') );
+                    if (err) return next( new errors.HttpError(422, err.message, 'image', 'upload') );
 
                     let body = { image: '/img/upload/' + req.file.filename };
 

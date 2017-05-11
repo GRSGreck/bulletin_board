@@ -1,0 +1,29 @@
+@import "../_app-variables";
+
+.input-container {
+  position: relative;
+
+  input {
+    padding-right: 40px;
+  }
+
+  .eye {
+    position: absolute;
+    top: 50%;
+    margin-top: -$eye-size / 2;
+    right: 10px;
+    width: $eye-size;
+    height: $eye-size;
+    background: url("../img/eye.svg") no-repeat center center;
+    background-size: 24px 24px;
+    opacity: .3;
+    cursor: pointer;
+  }
+
+  .eye:hover {
+    opacity: .5;
+  }
+  .eye.active {
+    opacity: .7;
+  }
+}

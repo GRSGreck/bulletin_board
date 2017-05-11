@@ -11,9 +11,7 @@ const meRouter = require('./me');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const passport = require("passport");
-const session = require('express-session');
-const RedisStore = require('connect-redis')(session);
-const colors = require('colors');
+const cookieSession = require('cookie-session');
 const _ = require('lodash');
 
 module.exports = function(app) {
@@ -22,12 +20,17 @@ module.exports = function(app) {
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json());
 
-    app.use(session({
-        store: new RedisStore({ host: '127.0.0.1', port: 6379 }),
+    app.use(cookieSession({
+        name: 'sid',
         secret: process.env.SECRET,
-        resave: false,
-        saveUninitialized: false
+        maxAge: 365 * 24 * 60 * 60 * 1000,
+        signed: false
     }));
+
+    app.use(function (req, res, next) {
+        if (req.body && !req.body.remember_me) req.sessionOptions.maxAge = false;
+        next();
+    });
 
     app.use(passport.initialize());
     app.use(passport.session());
@@ -54,24 +57,36 @@ module.exports = function(app) {
         err.status = err.status || 500;
 
         if (err.name && err.name === 'ValidationError') {
+
                 for (let field in err.errors) {
-                    isDevelopment
-                        ? resultArrErrors.push({ field: field, message: err.errors[field].message, stack: err.stack })
-                        : resultArrErrors.push({ field: field, message: err.errors[field].message });
+
+                    if (err.errors.hasOwnProperty(field)) {
+                        let error = {
+                            field: field,
+                            message: err.errors[field].message,
+                            type: err.errors[field].kind,
+                            stack: err.stack
+                        };
+
+                        resultArrErrors.push( isDevelopment ? error : _.omit(error, 'stack'));
+                    }
                 }
         } else {
+            let error = {
+                field: err.field || '',
+                message: err.message,
+                type: err.type || 'other',
+                stack: err.stack
+            };
+
             if (err instanceof errors.HttpError) {
-                isDevelopment
-                    ? resultArrErrors.push({ field: err.field, message: err.message, stack: err.stack })
-                    : resultArrErrors.push({ field: err.field, message: err.message });
+                resultArrErrors.push( isDevelopment ? error : _.omit(error, 'stack'));
             } else {
-                isDevelopment
-                    ? resultArrErrors.push({ success: false, message: err.message, stack: err.stack })
-                    : resultArrErrors.push({ success: false, message: err.message });
+                resultArrErrors.push( isDevelopment ? _.omit(error, 'field') : _.omit(error, ['field', 'stack']));
             }
         }
 
-        logger.error(JSON.stringify(resultArrErrors).red);
+        logger.error(JSON.stringify(resultArrErrors));
         res.status(err.status).json(resultArrErrors);
     });
 };

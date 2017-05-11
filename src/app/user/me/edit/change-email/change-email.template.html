@@ -1,28 +1,24 @@
-<form class="form-horizontal" [formGroup]="formEmail" novalidate (ngSubmit)="onSubmit()">
-    <div class="form-group" [ngClass]="{ 'has-danger': isInvalid(getFormControl('current_email')), 'has-success': isValid(getFormControl('current_email')) }">
-        <label class="form-control-label" for="current_email">Текущий email*</label>
-        <div>
-            <input type="email" formControlName="current_email" class="form-control" id="current_email" disabled="disabled" placeholder="Email">
-            <div class="alert alert-danger" *ngIf="isInvalid(getFormControl('current_email'))">
-                <p *ngFor="let error of getInvalidFields(getFormControl('current_email'))" class="form-text">{{ error }}</p>
-            </div>
-        </div>
+<div *ngIf="getSuccessMessage()" class="alert alert-success">Письмо с подтверждением о смене email адреса отправлено на указанный Вами email</div>
+<form class="form-horizontal" (keyup)="onKeyUp($event)" [formGroup]="formEmail" novalidate (ngSubmit)="onSubmit()">
+    <div class="form-group">
+        <label class="form-control-label">Текущий email</label>
+        <p class="currentEmail form-control-static">{{ getMaskCurrentEmail() }}</p>
     </div>
-    <div class="form-group" [ngClass]="{ 'has-danger': isInvalid(getFormControl('new_email')), 'has-success': isValid(getFormControl('new_email')) }">
+    <div class="form-group" [ngClass]="{ 'has-danger': isInvalid('new_email'), 'has-success': isValid('new_email') }">
         <label class="form-control-label" for="new_email">Новый email*</label>
         <div>
-            <input type="email" formControlName="new_email" class="form-control" id="new_email" placeholder="Email">
-            <div class="alert alert-danger" *ngIf="isInvalid(getFormControl('new_email'))">
-                <p *ngFor="let error of getInvalidFields(getFormControl('new_email'))" class="form-text">{{ error }}</p>
+            <input type="email" autocomplete="off" formControlName="new_email" class="form-control" id="new_email" placeholder="Новый email">
+            <div class="alert alert-danger" *ngIf="isInvalid('new_email')">
+                <p *ngFor="let error of getInvalidFields('new_email')" class="form-text">{{ error }}</p>
             </div>
         </div>
     </div>
-    <div class="form-group" [ngClass]="{ 'has-danger': isInvalid(getFormControl('password')), 'has-success': isValid(getFormControl('password')) }">
+    <div class="form-group" [ngClass]="{ 'has-danger': isInvalid('password'), 'has-success': isValid('password') }">
         <label class="form-control-label" for="password">Пароль*</label>
         <div>
-            <input type="password" formControlName="password" class="form-control" id="password" placeholder="Пароль">
-            <div class="alert alert-danger" *ngIf="isInvalid(getFormControl('password'))">
-                <span *ngFor="let error of getInvalidFields(getFormControl('password'))" class="form-text">{{ error }}</span>
+            <input autocomplete="new-password" type="password" formControlName="password" class="form-control" id="password" placeholder="Пароль">
+            <div class="alert alert-danger" *ngIf="isInvalid('password')">
+                <span *ngFor="let error of getInvalidFields('password')" class="form-text">{{ error }}</span>
             </div>
         </div>
     </div>
@@ -30,7 +26,6 @@
         <div>
             <!--<button type="submit" class="btn btn-primary" [disabled]="formEmail.invalid">Сохранить</button>-->
             <button type="submit" class="btn btn-primary">Сохранить</button>
-            <a routerLink="/me" class="btn btn-secondary">Назад</a>
         </div>
     </div>
 </form>

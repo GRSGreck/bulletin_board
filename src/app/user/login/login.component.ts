@@ -1,11 +1,9 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
-import {FormGroup, FormBuilder, Validators, FormControl} from '@angular/forms';
-import {NgbModal, ModalDismissReasons, NgbModalRef} from "@ng-bootstrap/ng-bootstrap";
+import {FormGroup, FormBuilder, Validators} from '@angular/forms';
 
-import {FormValidationAbstract} from "../shared/form-validation.abstract";
+import {FormPasswordAbstract} from "../shared/form-password.abstract";
 import {UserService} from "../user.service";
-import {NgbdModalContent} from "../modal/modal.content";
 
 @Component({
     selector: 'form-login',
@@ -13,73 +11,48 @@ import {NgbdModalContent} from "../modal/modal.content";
     styleUrls: ['./login.styles.scss']
 })
 
-export class LoginComponent extends FormValidationAbstract {
+export class LoginComponent extends FormPasswordAbstract implements OnInit {
     formLogin: FormGroup;
-    closeResult: string;
 
     constructor(
         private fb: FormBuilder,
         private userService: UserService,
-        private modalService: NgbModal,
         private router: Router
     ) {
         super();
+    }
 
-        this.formLogin = fb.group({
+    ngOnInit(): void {
+        this.formLogin = this.fb.group({
             email: ['', [
                 Validators.required,
                 Validators.pattern(/^(([^@]|[a-zA-Z\d.+ -]*)(?=@)@([a-zA-Z\d-]*)\.[a-zA-Z]+)$/),
                 Validators.maxLength(100)
             ]],
-            password: ['', [ Validators.required, Validators.minLength(6), Validators.maxLength(24) ]]
+            password: ['', [ Validators.required, Validators.minLength(6), Validators.maxLength(24) ]],
+            remember_me: [true]
         });
-    }
 
-    public getFormControl(fieldName: string): FormControl {
-        return <FormControl>this.formLogin.controls[fieldName];
+        this.setFormGroup(this.formLogin);
     }
 
     public onSubmit(): void {
         let user = this.formLogin.value;
-        let self = this;
+
+        this.markAsTouchedAllFields(this.formLogin);
+        this.setIsSending(true);
 
         this.userService.login(user)
             .subscribe(
-                (res) => self.router.navigate(['/me']),
-                (err) => {
-                    let modalRef = this.open(NgbdModalContent);
-                    modalRef.componentInstance.invalidErrors = this._getError(err);
+                res => {
+                    this.router.navigate(['/me']);
+                    this.formLogin.reset();
+                    this.setIsSending(false);
+                },
+                err => {
+                    this.getErrors(err);
+                    this.setIsSending(false);
                 }
             );
-    }
-
-    private _getError(err: Object): Object[] {
-        return JSON.parse(err['_body']);
-    }
-
-    private open(content: any): NgbModalRef {
-        let modalRef = this.modalService.open(content);
-
-        modalRef.result.then(
-            result => {
-                this.closeResult = `Closed with: ${result}`;
-            },
-            reason => {
-                this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-            });
-
-        modalRef.componentInstance.modalTitle = 'Регистрация';
-
-        return modalRef;
-    }
-
-    private getDismissReason(reason: any): string {
-        if (reason === ModalDismissReasons.ESC) {
-            return 'by pressing ESC';
-        } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
-            return 'by clicking on a backdrop';
-        } else {
-            return `with: ${reason}`;
-        }
     }
 }

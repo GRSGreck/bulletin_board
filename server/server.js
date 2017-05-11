@@ -3,7 +3,6 @@
 const logger = require('./libs/logger')(module);
 const mongoose = require('mongoose');
 const express = require('express');
-const colors = require('colors');
 
 try {
     require('../config/vars.env');
@@ -32,13 +31,13 @@ mongoose.connect(process.env.DB_HOST, process.env.DB_NAME, process.env.DB_PORT, 
 const db = mongoose.connection;
 
 db.on('open', function() {
-    logger.info(`Connecting to a database "${ process.env.DB_NAME }" was completed successfully on port: ${ process.env.DB_PORT }`.green);
+    logger.info(`Connecting to a database "${ process.env.DB_NAME }" was completed successfully on port: ${ process.env.DB_PORT }`);
 
     require('./routes')(app);
 
     app.listen(process.env.PORT, function() {
-        logger.warn(`NODE_ENV: ${ process.env.NODE_ENV ? process.env.NODE_ENV : 'development' }`.yellow);
-        logger.info(`Server running on port: ${ process.env.PORT }`.green);
+        logger.warn(`NODE_ENV: ${ process.env.NODE_ENV ? process.env.NODE_ENV : 'development' }`);
+        logger.info(`Server running on port: ${ process.env.PORT }`);
     });
 });
 

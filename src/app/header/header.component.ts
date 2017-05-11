@@ -12,8 +12,8 @@ import {User} from "../user/shared/user.model";
 
 export class HeaderComponent implements OnInit, OnDestroy {
     isLoggedIn: boolean = false;
-    subscription: any;
     currentUser: User;
+    subscription: any;
 
     constructor(
         private router: Router,

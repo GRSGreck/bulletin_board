@@ -1,11 +1,13 @@
 @import "bootstrap/_bootstrap";
 @import "_app-variables";
+@import "forms/_forms";
 
 * {
-    box-sizing: border-box;
-    font-family: Tahoma, Arial, sans-serif;
+  box-sizing: border-box;
+  font-family: Tahoma, Arial, sans-serif;
 }
 
 a.btn.btn-link:focus {
-    box-shadow: none;
+  box-shadow: none;
 }
+

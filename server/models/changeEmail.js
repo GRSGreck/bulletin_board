@@ -3,20 +3,22 @@
 const mongoose = require('mongoose');
 
 const ChangeEmailSchema = new mongoose.Schema({
-    newEmail: {
+    new_email: {
         type: String,
         validate: {
             validator: (value) => /^(([^@]|[a-zA-Z\d.+ -]*)(?=@)@([a-zA-Z\d-]*)\.[a-zA-Z]+)$/.test(value),
-            message: '{VALUE} is not a valid email address (valid email address to be in "ilovelife@gmail.com"this format)'
+            message: '{VALUE} is invalid email address (valid email address to be in "ilovelife@gmail.com"this format)',
+            type: 'pattern_email'
         },
         required: [true, 'Field "{PATH}" is required'],
         unique: true
     },
-    oldEmail: {
+    old_email: {
         type: String,
         validate: {
             validator: (value) => /^(([^@]|[a-zA-Z\d.+ -]*)(?=@)@([a-zA-Z\d-]*)\.[a-zA-Z]+)$/.test(value),
-            message: '{VALUE} is not a valid email address (valid email address to be in "ilovelife@gmail.com"this format)'
+            message: '{VALUE} is invalid email address (valid email address to be in "ilovelife@gmail.com"this format)',
+            type: 'pattern_email'
         },
         required: [true, 'Field "{PATH}" is required']
     },
@@ -30,4 +32,4 @@ const ChangeEmailSchema = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('change_model', ChangeEmailSchema);
+module.exports = mongoose.model('change_email', ChangeEmailSchema);

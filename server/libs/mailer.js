@@ -2,7 +2,6 @@
 
 const nodemailer = require('nodemailer');
 const logger = require('./logger')(module);
-const colors = require('colors');
 const juice = require('juice');
 
 const transporter = nodemailer.createTransport({
@@ -24,7 +23,7 @@ module.exports = {
         let isDevelopment = (!process.env.NODE_ENV || process.env.NODE_ENV ==='development');
 
         if (isDevelopment) options.to = process.env.TEST_EMAIL;
-        logger.debug(`Отправка email на адрес: ${ options.to }`.blue );
+        logger.info(`Отправка email на адрес: ${ options.to }`);
 
         // juice() делаем стили инлайновыми
         options.html = juice(options.html);

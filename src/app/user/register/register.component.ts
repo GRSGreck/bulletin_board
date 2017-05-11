@@ -1,12 +1,10 @@
-import {Component} from '@angular/core';
-import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
-import {NgbModal, ModalDismissReasons, NgbModalRef} from '@ng-bootstrap/ng-bootstrap';
-
-import { FormValidationAbstract } from '../shared/form-validation.abstract';
-import { UserService } from "../user.service";
-import { User } from '../shared/user.model';
-import {NgbdModalContent} from "../modal/modal.content";
+import {Component, OnInit} from '@angular/core';
+import {FormGroup, Validators, FormBuilder} from '@angular/forms';
 import {Router} from "@angular/router";
+
+import {FormPasswordAbstract} from "../shared/form-password.abstract";
+import {PREFIX_PASSWORD_GROUP} from '../../core/constants';
+import {UserService} from "../user.service";
 
 @Component({
     selector: 'form-register',
@@ -14,80 +12,56 @@ import {Router} from "@angular/router";
     styleUrls: ['./register.styles.scss']
 })
 
-export class RegisterComponent extends FormValidationAbstract {
+export class RegisterComponent extends FormPasswordAbstract implements OnInit {
     formRegister: FormGroup;
-    closeResult: string;
 
     constructor(
         private fb: FormBuilder,
         private userService: UserService,
-        private modalService: NgbModal,
         private router: Router
     ){
         super();
+    }
 
-        this.formRegister = fb.group({
+    ngOnInit(): void {
+        this.formRegister = this.fb.group({
             email: ['', [
                 Validators.required,
                 Validators.pattern(/^(([^@]|[a-zA-Z\d.+ -]*)(?=@)@([a-zA-Z\d-]*)\.[a-zA-Z]+)$/),
                 Validators.maxLength(100)
             ]],
-            password: ['', [ Validators.required, Validators.minLength(6), Validators.maxLength(24) ]],
-            name: ['', [ Validators.required, Validators.minLength(3), Validators.maxLength(30) ]],
-            phone: ['+380', Validators.pattern(/^(\+\d{2})?\d{10}$/)]
-        });
-    }
 
-    public getFormControl(fieldName: string): FormControl {
-        return <FormControl>this.formRegister.controls[fieldName];
+            [PREFIX_PASSWORD_GROUP]: this.fb.group({
+                password: ['', [ Validators.required, Validators.minLength(6), Validators.maxLength(24) ]],
+                confirm_password: ['', [ Validators.required, Validators.minLength(6), Validators.maxLength(24) ]]
+            }, { validator: this.isEqual })
+        });
+
+        this.setFormGroup(this.formRegister);
     }
 
     public onSubmit(): void {
-        let user: User = this.formRegister.value;
-        let self = this;
+        let user = {
+            email: this.formRegister.get('email').value,
+            password: this.formRegister.get(`${PREFIX_PASSWORD_GROUP}.password`).value,
+            confirm_password: this.formRegister.get(`${PREFIX_PASSWORD_GROUP}.confirm_password`).value,
+        };
+
+        this.markAsTouchedAllFields(this.formRegister);
+        this.setIsSending(true);
 
         this.userService.create(user)
             .subscribe(
-                function (res) {
-                    console.log('Register user:', res);
-                    self.router.navigate(['/me']);
+                res => {
+                    this.router.navigate(['/me']);
+                    this.formRegister.reset();
+                    this.setIsSending(false);
                 },
                 err => {
-                    let modalRef = this.open(NgbdModalContent);
-                    modalRef.componentInstance.invalidErrors = this._getError(err);
+                    this.getErrors(err, { isFormSubgroups: true });
+                    this.setIsSending(false);
                 }
             );
     }
-
-    private _getError(err: Object): Object[] {
-        return JSON.parse(err['_body']);
-    }
-
-    private open(content: any): NgbModalRef {
-        let modalRef = this.modalService.open(content);
-
-        modalRef.result.then(
-            result => {
-                this.closeResult = `Closed with: ${result}`;
-                console.log('close result_1:', this.closeResult);
-            },
-            reason => {
-                this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-                console.log('close result_2:', this.closeResult);
-            });
-
-        modalRef.componentInstance.modalTitle = 'Регистрация';
-
-        return modalRef;
-    }
-
-    private getDismissReason(reason: any): string {
-        if (reason === ModalDismissReasons.ESC) {
-            return 'by pressing ESC';
-        } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
-            return 'by clicking on a backdrop';
-        } else {
-            return `with: ${reason}`;
-        }
-    }
 }
+

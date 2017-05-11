@@ -7,6 +7,10 @@
         <div class="col-md-8 col-lg-9">
             <h3>{{ currentUser.name }}</h3>
             <div class="me-info clearfix">
+                <div class="label-info">ID:</div>
+                <div class="labeled-info">{{ currentUser._id }}</div>
+            </div>
+            <div class="me-info clearfix">
                 <div class="label-info">Email:</div>
                 <div class="labeled-info">
                     <a href="mailto:{{ currentUser.email }}">{{ currentUser.email }}</a>
@@ -16,6 +20,7 @@
                 <div class="label-info">Телефон:</div>
                 <div class="labeled-info">{{ currentUser.phone }}</div>
             </div>
+
         </div>
     </div>
 </div>

@@ -9,7 +9,6 @@ $avatar_size: 38px;
   padding-top: 10px;
   padding-bottom: 10px;
   position: relative;
-  margin-bottom: 50px;
 
   .logo {
     text-decoration: none;
@@ -20,6 +19,7 @@ $avatar_size: 38px;
     display: block;
     position: absolute;
     bottom: -28px;
+    z-index: 1000;
   }
 
   .header-avatar {

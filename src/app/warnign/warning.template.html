@@ -1,0 +1,10 @@
+<div *ngIf="getWarning()" class="container-fluid alert alert-warning">
+    <div class="container">
+        <div class="warning-container">
+            <p>{{ getWarning() }}&nbsp;&nbsp;
+                <a *ngIf="!currentUser.isVerified()" (click)="onResendLetter($event)" href="/api/me/verify-user/resend">Отправить письмо повторно</a>
+            </p>
+        </div>
+    </div>
+</div>
+

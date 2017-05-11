@@ -4,9 +4,8 @@ const logger = require('../libs/logger')(module);
 const mailer = require('../libs/mailer');
 const UserModel = require('../models/user');
 const ChangeEmailModel = require('../models/changeEmail');
-const ForgotPasswordModel = require('../models/forgotPasswordModel');
+const VerifyUserModel = require('../models/verifyUserModel');
 const errors = require('../errors');
-const colors = require('colors');
 const util = require('util');
 const ejs = require('ejs');
 const uuid = require('uuid');
@@ -19,54 +18,6 @@ module.exports = function Me() {
         let user = _.omit(req.user.toObject(), 'password', '__v');
         res.status(200).json(user);
     };
-
-    //TODO: реализовать смену email адреса с подтверждением на эл.почте
-    //TODO: отделить логику смены пароля
-    // this.updateCurrentUser = function(req, res, next) {
-    //     // let { name, phone } = req.body;
-    //
-    //     logger.debug('R req.user:', req.user.toObject());
-    //     logger.debug('R req.user._id:', req.user._id);
-    //
-    //     if (req.body.email) req.body.email = req.body.email.trim().toLowerCase();
-    //     if (req.body.phone) req.body.phone = req.body.phone.trim();
-    //     if (req.body.name) req.body.name = req.body.name.trim();
-    //
-    //     if (!req.body.current_password && req.body.new_password) {
-    //         return next( new errors.HttpError(422, 'Wrong current_password', 'Current_password') );
-    //     } else if (req.body.current_password && !req.body.new_password) {
-    //         return next( new errors.HttpError(422, 'Wrong new_password', 'New_password') );
-    //     } else {
-    //
-    //         if (req.body.current_password && req.body.new_password) {
-    //             req.body.current_password = req.body.current_password.trim();
-    //             req.body.new_password = req.body.new_password.trim();
-    //
-    //             if (req.user.password !== req.body.current_password) {
-    //                 return next( new errors.HttpError(422, 'Existing password does not match the entered', 'current_password') );
-    //             }
-    //             req.body.password = req.body.new_password;
-    //         }
-    //
-    //         UserModel.findByIdAndUpdate(req.user._id, req.body, {
-    //             runValidators: true,
-    //             new: true,
-    //             fields: {
-    //                 password: 0,
-    //                 __v: 0
-    //             }
-    //         }).exec((err, user) => {
-    //                 if (err) {
-    //                     err.status = 422;
-    //
-    //                     return next(err);
-    //                 }
-    //
-    //                 logger.info('It was updated user:\n' + user);
-    //                 res.status(200).json(user);
-    //             });
-    //     }
-    // };
 
     this.updateProfile = function (req, res, next) {
         let {name = '', phone = ''} = req.body;
@@ -89,30 +40,30 @@ module.exports = function Me() {
                 return next(err);
             }
 
-            logger.info('It was updated user profile:\n' + user);
+            logger.info(`It was updated user profile: ${ JSON.stringify(user) }`);
             res.status(200).json(user);
         });
     };
 
     this.changeEmail = function (req, res, next) {
-        let { email: newEmail, password } = req.body;
+        let { new_email, password } = req.body;
 
-        if (!newEmail) return next( new errors.HttpError(400, 'Not set new email address', 'email') );
-        if (!password) return next( new errors.HttpError(400, 'Not set password', 'password') );
+        if (!new_email) return next( new errors.HttpError(400, 'Field new_email is required', 'new_email', 'required') );
+        if (!password) return next( new errors.HttpError(400, 'Field password is required', 'password', 'required') );
 
         async.waterfall([
             function (cb) {
                 req.user.comparePassword(password, (err, isMatch) => {
-                    cb( !isMatch ? new errors.HttpError(400, 'Incorrect password', 'password') : err );
+                    cb( !isMatch ? new errors.HttpError(400, 'Wrong current password', 'password', 'wrong_password') : err );
                 });
             },
 
             function (cb) {
-                if ( !_.isString(newEmail) ) newEmail = newEmail.toString();
-                newEmail = newEmail.trim().toLowerCase();
+                if ( !_.isString(new_email) ) new_email = new_email.toString();
+                new_email = new_email.trim().toLowerCase();
 
-                UserModel.findOne({ email: newEmail })
-                    .exec((err, user) => cb( user ? new errors.HttpError(400, 'Duplicate email address', 'email') : err ));
+                UserModel.findOne({ email: new_email })
+                    .exec((err, user) => cb( user ? new errors.HttpError(400, 'Duplicate email address', 'new_email', 'duplicate_email') : err ));
             },
 
             function(cb) {
@@ -123,7 +74,7 @@ module.exports = function Me() {
                     nsecs: 5678
                 }).replace(/-/g, '');
 
-                let body = { newEmail, oldEmail: req.user.email, uid: req.user.id, hash };
+                let body = { new_email, old_email: req.user.email, uid: req.user.id, hash };
 
                 ChangeEmailModel.update({ uid: req.user.id }, body, {
                     runValidators: true,
@@ -132,7 +83,7 @@ module.exports = function Me() {
                 }).exec((err, success) => {
                     if (err) return cb(err);
 
-                    logger.info(`Changing email address. Successful record into a temporary collection: ${ JSON.stringify(success) }`.green);
+                    logger.info(`Changing email address. Successful record into a temporary collection: ${ JSON.stringify(success) }`);
                     cb(null, hash);
                 });
             },
@@ -159,7 +110,7 @@ module.exports = function Me() {
                 return next(err);
             }
 
-            logger.info(`Email successfully sent! Result ${ JSON.stringify(result) }`.green);
+            logger.info(`Email successfully sent! Result ${ JSON.stringify(result) }`);
             res.send({ success: true, message: 'Email successfully sent!' });
         });
     };
@@ -173,9 +124,9 @@ module.exports = function Me() {
 
         let pwds = { currentPwd, newPwd, confirmPwd };
 
-        if (!pwds.currentPwd) return next( new errors.HttpError(422, 'Fields are missing', 'current_password') );
-        if (!pwds.newPwd) return next( new errors.HttpError(422, 'Fields are missing', 'new_password') );
-        if (!pwds.confirmPwd) return next( new errors.HttpError(422, 'Fields are missing', 'confirm_password') );
+        if (!pwds.currentPwd) return next( new errors.HttpError(422, 'Field current_password is required', 'current_password', 'required') );
+        if (!pwds.newPwd) return next( new errors.HttpError(422, 'Field new_password is required', 'new_password', 'required') );
+        if (!pwds.confirmPwd) return next( new errors.HttpError(422, 'Field confirm_password is required', 'confirm_password', 'required') );
 
         for (let key in pwds) pwds[key] = pwds[key].toString().trim();
 
@@ -186,10 +137,10 @@ module.exports = function Me() {
             }
 
             if (!isMatch) {
-                return next( new errors.HttpError(422, 'Wrong current password', 'current_password') );
+                return next( new errors.HttpError(422, 'Wrong current password', 'current_password', 'wrong_password') );
             }
             if (pwds.newPwd !== pwds.confirmPwd) {
-                return next( new errors.HttpError(422, 'Not the same fields "new_password" and "confirm_password"', 'new_password'));
+                return next( new errors.HttpError(422, 'Passwords do not match "new_password" and "confirm_password"', 'new_password', 'passwords_not_match'));
             }
 
             UserModel.findById(req.user._id)
@@ -206,37 +157,18 @@ module.exports = function Me() {
                             return next(err);
                         }
 
-                        logger.info(`It was updated user password. User _id: ${user._id}`.green);
+                        logger.info(`It was updated user password. User _id: ${user._id}`);
                         res.status(200).send({status: 'success', message: 'Success updated password'});
                     });
                 });
         });
     };
 
-    this.forgotPassword = function (req, res, next) {
-        let {
-            email: email,
-            new_password: newPwd,
-            confirm_password: confirmPwd
-        } = req.body;
-
-        if (!email) return next( new errors.HttpError(400, 'Fields are missing', 'email') );
-        if (!newPwd) return next( new errors.HttpError(400, 'Fields are missing', 'new_password') );
-        if (!confirmPwd) return next( new errors.HttpError(400, 'Fields are missing', 'confirm_password') );
-
-        email = email.toString().trim().toLowerCase();
-        newPwd = newPwd.toString().trim();
-        confirmPwd = confirmPwd.toString().trim();
-
-        if (newPwd !== confirmPwd) {
-            return next( new errors.HttpError(422, 'Not equal fields "new_password" and "confirm_password"', 'new_password'));
-        }
+    this.verifyUserResend = function (req, res, next) {
+        let uid = req.user._id;
 
         async.waterfall([
-            function (cb) {
-                ForgotPasswordModel.findOne({ email: email })
-                    .exec((err, model) => cb(err, model));
-            },
+            (cb) => VerifyUserModel.findOne({ uid }).exec((err, model) => cb(err, model)),
 
             function(model, cb) {
                 let hash = uuid.v1({
@@ -246,59 +178,44 @@ module.exports = function Me() {
                     nsecs: 5678
                 }).replace(/-/g, '');
 
-                let body = { email, hash, new_password: newPwd };
-
-                let _forgotPasswordModel;
+                let _verifyUserModel;
 
                 if (model) {
-                    model.new_password = newPwd;
+                    model.uid = uid;
                     model.hash = hash;
-                    _forgotPasswordModel = model;
+                    _verifyUserModel = model;
                 } else {
-                    _forgotPasswordModel = new ForgotPasswordModel(body)
+                    _verifyUserModel = new VerifyUserModel({ uid, hash })
                 }
 
-                _forgotPasswordModel.save((err, success) => {
+                _verifyUserModel.save((err, success) => {
                     if (err) return cb(err);
 
-                    logger.info(`Changing email address. Successful record into a temporary collection: ${ JSON.stringify(success) }`.green);
+                    logger.info(`Verifying the user. Successful record into a temporary collection: ${ JSON.stringify(success) }`);
                     cb(null, hash);
                 });
             },
 
-            function (hash, cb) {
-                let path = helpers.root('server', 'templates', 'mailer', 'forgot-password.ejs');
+            function(hash, cb) {
+                let path = helpers.root('server', 'templates', 'mailer', 'verify-user.ejs');
 
                 ejs.renderFile(path, {
-                    url: `${process.env.BASE_URL}/forgot-password?verify=${hash}`
+                    url: `${process.env.BASE_URL}/verify-user?verify=${hash}`
                 }, (err, html) => cb(err, html));
             },
 
-            function (html, cb) {
+            function(html, cb) {
                 mailer.send({
                     from: process.env.SMTP_USER,
-                    to: email,
-                    subject: 'Forgot password',
+                    to: req.user.email,
+                    subject: 'Verify user',
                     html: html
-                }, (err, response) => cb(err, response));
-            }
-        ], function (err, result) {
-            if (err) {
-                if (!err.status) err.status = 422;
-                return next(err);
+                }, (err, response) => cb(err));
             }
 
-            logger.info(`Email successfully sent! Result ${ JSON.stringify(result) }`.green);
-            res.send({ success: true, message: 'Email successfully sent!' });
+        ], function(err) {
+            if (err) return next(err);
+            res.status(200).send({ success: true, message: 'Verify user resend success' });
         });
-    }
+    };
 };
-
-
-
-
-
-
-
-
-

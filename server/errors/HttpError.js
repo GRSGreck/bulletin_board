@@ -1,19 +1,18 @@
 'use strict';
 
-const util = require('util');
 const http = require('http');
 
-function HttpError(status, message, field) {
-    Error.apply(this, arguments);
-    Error.captureStackTrace(this, HttpError);
+class HttpError extends Error {
+    constructor(status, message, field, type) {
+        super();
 
-    this.status = status;
-    this.message = message || http.STATUS_CODES[status] || 'Error';
-    if (field) this.field = field;
+        this.status = status;
+        this.message = message || http.STATUS_CODES[status] || 'Error';
+        this.type = type || 'other';
+        this.name = 'HttpError';
+
+        if (field) this.field = field;
+    }
 }
-
-util.inherits(HttpError, Error);
-
-HttpError.prototype.name = 'HttpError';
 
 module.exports = HttpError;

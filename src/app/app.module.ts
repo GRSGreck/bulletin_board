@@ -8,11 +8,11 @@ import {UserModule} from './user/user.module';
 // Services
 import {AppService} from "./app.service";
 import {UserService} from "./user/user.service";
-import {ConstService} from "./core/const.service";
 
 // App components
 import {AppComponent} from './app.component';
 import {HeaderComponent} from "./header/header.component";
+import {WarningComponent} from "./warnign/warning.component";
 import {HomeComponent} from './home/home.component';
 import {NotFoundComponent} from './errors/not-found/not-found.component';
 import {AppRoutingModule} from './app.routing';
@@ -44,12 +44,12 @@ let preloading = {
     declarations: [
         AppComponent,
         HeaderComponent,
+        WarningComponent,
         HomeComponent,
         NotFoundComponent
     ],
     providers: [
         AppService,
-        ConstService,
         preloading
     ],
     bootstrap: [ AppComponent ]

@@ -8,6 +8,7 @@ import { User } from './shared/user.model';
 
 export class UserService {
     private _loggedInChange: EventEmitter<any> = new EventEmitter();
+    private _currentUserUpdated: EventEmitter<any> = new EventEmitter();
     private _loggedIn: boolean = false;
     private _currentUser: User = null;
 
@@ -18,7 +19,7 @@ export class UserService {
 
             this._getCurrentUser().subscribe(
                 (user: User) => {
-                    this._setCurrentUser(user);
+                    this._setCurrentUser(new User(user));
                     this._setLoggedIn(true);
                     resolve(true);
                 },
@@ -31,28 +32,24 @@ export class UserService {
         });
     }
 
-    public create(user: User): Observable<any> {
+    public create(fields: Object): Observable<User> {
         let headers = new Headers();
 
         headers.append('Content-Type', 'application/json');
 
         return this.http
-            .post('/api/register', JSON.stringify(user), {headers})
+            .post('/api/register', JSON.stringify(fields), {headers})
             .map((res: Response) => new User( res.json() ))
             .map((user: User) => {
                 this._setCurrentUser(user);
                 this._setLoggedIn(true);
                 this._emitLoggedInChangeEvent();
-
                 return { success: 'login' };
             })
             .catch((err: Response) => Observable.throw(err));
     }
 
     private _getCurrentUser(): Observable<User> {
-        let headers = new Headers();
-        headers.append('Content-Type', 'application/json');
-
         return this.http
             .get('/api/me')
             .map((res: Response) => new User( res.json() ))
@@ -61,10 +58,7 @@ export class UserService {
 
     public editCurrentUser(user: User): Observable<any> {
         let headers = new Headers();
-
         headers.append('Content-Type', 'application/json');
-
-        console.log('R editCurrentUser:', user);
 
         return this.http
             .put('/api/me', JSON.stringify(user), {headers})
@@ -72,7 +66,53 @@ export class UserService {
                 let user = new User (res.json());
                 this._setCurrentUser(user);
                 this._emitLoggedInChangeEvent();
+                return user;
             })
+            .catch((err: Response) => Observable.throw(err));
+    }
+
+    public editProfile(fields: Object): Observable<User> {
+        let headers = new Headers();
+        headers.append('Content-Type', 'application/json');
+
+        return this.http
+            .put('api/me/profile', JSON.stringify(fields), {headers})
+            .map((res: Response) => {
+                let user = new User( res.json() );
+                this._setCurrentUser(user);
+                this._emitCurrentUserUpdated();
+                return user;
+            })
+            .catch((err: Response) => Observable.throw(err));
+    }
+
+    public changeEmail(fields: Object): Observable<Response> {
+        let headers = new Headers();
+        headers.append('Content-Type', 'application/json');
+
+        return this.http
+            .put('api/me/email', JSON.stringify(fields), {headers})
+            .map((res: Response) => res.json())
+            .catch((err: Response) => Observable.throw(err));
+    }
+
+    public changePassword(fields: Object): Observable<Response> {
+        let headers = new Headers();
+        headers.append('Content-Type', 'application/json');
+
+        return this.http
+            .put('api/me/change-password', JSON.stringify(fields), {headers})
+            .map((res: Response) => res.json())
+            .catch((err: Response) => Observable.throw(err));
+    }
+
+    public forgotPassword(fields: Object): Observable<Response> {
+        let headers = new Headers();
+        headers.append('Content-Type', 'application/json');
+
+        return this.http
+            .put('api/forgot-password', JSON.stringify(fields), {headers})
+            .map((res: Response) => res.json())
             .catch((err: Response) => Observable.throw(err));
     }
 
@@ -91,6 +131,13 @@ export class UserService {
 
                 return user;
             })
+            .catch((err: Response) => Observable.throw(err));
+    }
+
+    public resendLetter(): Observable<any> {
+        return this.http
+            .get('/api/me/verify-user/resend')
+            .map((res: Response) => res.json())
             .catch((err: Response) => Observable.throw(err));
     }
 
@@ -133,5 +180,13 @@ export class UserService {
 
     public getLoggedInChange(): EventEmitter<any> {
         return this._loggedInChange;
+    }
+
+    private _emitCurrentUserUpdated(): void {
+        this._currentUserUpdated.emit();
+    }
+
+    public getCurrentUserUpdated(): EventEmitter<any> {
+        return this._currentUserUpdated;
     }
 }
