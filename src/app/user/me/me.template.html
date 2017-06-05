@@ -5,18 +5,18 @@
             <div><a routerLink="/me/edit/profile" class="btn btn-secondary">Редактировать</a></div>
         </div>
         <div class="col-md-8 col-lg-9">
-            <h3>{{ currentUser.name }}</h3>
-            <div class="me-info clearfix">
-                <div class="label-info">ID:</div>
+            <h3>{{ currentUser.getFullName() }}</h3>
+            <div *ngIf="currentUser._id" class="me-info clearfix">
+                <div class="label-info">ID номер:</div>
                 <div class="labeled-info">{{ currentUser._id }}</div>
             </div>
-            <div class="me-info clearfix">
+            <div *ngIf="currentUser.email" class="me-info clearfix">
                 <div class="label-info">Email:</div>
                 <div class="labeled-info">
                     <a href="mailto:{{ currentUser.email }}">{{ currentUser.email }}</a>
                 </div>
             </div>
-            <div class="me-info clearfix">
+            <div *ngIf="currentUser.phone" class="me-info clearfix">
                 <div class="label-info">Телефон:</div>
                 <div class="labeled-info">{{ currentUser.phone }}</div>
             </div>

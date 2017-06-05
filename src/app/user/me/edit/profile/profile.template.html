@@ -1,28 +1,41 @@
 <div *ngIf="getSuccessMessage()" class="alert alert-success">Изменения успешно сохранены</div>
-<form (keyup)="onKeyUp($event)" (click)="onKeyUp($event)" class="form-horizontal" novalidate [formGroup]="formProfile" (ngSubmit)="onSubmit()">
-    <div class="form-group" [ngClass]="{ 'has-danger': isInvalid('name'), 'has-success': isValid('name') }">
-        <label class="form-control-label" for="name">Имя*</label>
-        <div>
-            <input autocomplete="off" type="text" formControlName="name" class="form-control" id="name" placeholder="Имя">
-            <div class="alert alert-danger" *ngIf="isInvalid('name')">
-                <span *ngFor="let error of getInvalidFields('name')" class="form-text">{{ error }}</span>
-            </div>
+<form (keyup)="onKeyUp($event)" (click)="onKeyUp($event)" class="form-horizontal" [formGroup]="formProfile" (ngSubmit)="onSubmit()">
+    <div class="form-group" [ngClass]="{ 'has-danger': isInvalid('firstName'), 'has-success': isValid('firstName') }">
+        <label class="form-control-label" for="firstName">Имя</label>
+        <input autocomplete="off" type="text" formControlName="firstName" class="form-control" id="firstName" placeholder="Имя">
+        <div class="alert alert-danger" *ngIf="isInvalid('firstName')">
+            <span *ngFor="let error of getInvalidFields('firstName')" class="form-text">{{ error }}</span>
         </div>
     </div>
-    <div class="form-group" [ngClass]="{ 'has-danger': isInvalid('phone'), 'has-success': isValid('phone') }">
-        <label class="form-control-label" for="phone">Телефон</label>
-        <div>
-            <input autocomplete="off" type="text" formControlName="phone" class="form-control" id="phone" placeholder="Телефон">
-            <div class="alert alert-danger" *ngIf="isInvalid('phone')">
-                <span *ngFor="let error of getInvalidFields('phone')" class="form-text">{{ error }}</span>
-            </div>
+    <div class="form-group" [ngClass]="{ 'has-danger': isInvalid('lastName'), 'has-success': isValid('lastName') }">
+        <label class="form-control-label" for="lastName">Фамилия</label>
+        <input autocomplete="off" type="text" formControlName="lastName" class="form-control" id="lastName" placeholder="Фамилия">
+        <div class="alert alert-danger" *ngIf="isInvalid('lastName')">
+            <span *ngFor="let error of getInvalidFields('lastName')" class="form-text">{{ error }}</span>
         </div>
     </div>
-    <div class="form-group">
+    <div class="phones" formArrayName="phones">
+        <div
+            class="form-group"
+            *ngFor="let phone of formProfile.get('phones')['controls']; let i = index;"
+            [ngClass]="{ 'has-danger': isInvalid('phones.' + i), 'has-success': isValid('phones.' + i) }">
+
+            <label class="form-control-label" for="{{ 'phones.' + i }}">Телефон</label>
+            <input autocomplete="off" type="text" formControlName="{{ i }}" class="form-control" id="{{ 'phones.' + i }}" placeholder="Телефон">
+            <div class="alert alert-danger" *ngIf="isInvalid('phones.' + i)">
+                <span *ngFor="let error of getInvalidFields('phones.' + i)" class="form-text">{{ error }}</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <button type="button" [disabled]="isMaxNumberPhones()" (click)="addPhone($event)" class="btn btn-success btn-sm">Добавить</button>
+            <button type="button" (click)="removePhone($event)" class="btn btn-danger btn-sm">Удалить</button>
+        </div>
+    </div>
+    <div class="form-group controls">
         <div>
             <button type="submit"
                     class="btn btn-primary"
-                    [disabled]="formProfile.pristine || getIsOldValue() || formProfile.invalid">Сохранить</button>
+                    [disabled]="getIsSending()">Сохранить</button>
             <a routerLink="/me" class="btn btn-secondary">Назад</a>
         </div>
     </div>

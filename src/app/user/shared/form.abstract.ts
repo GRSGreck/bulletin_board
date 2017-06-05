@@ -1,4 +1,4 @@
-import {FormGroup, FormControl, FormArray} from '@angular/forms';
+import {FormGroup, FormControl, FormArray, Form} from '@angular/forms';
 import {Response} from "@angular/http";
 import * as _ from 'lodash';
 
@@ -24,10 +24,15 @@ export abstract class FormAbstract {
             if (!_.size(_errors) && (fields.length - 1) === i) return [];
 
             return _.map(_errors, (value: string, key: string) => {
+                let firstFieldName: string = fields[i].split('.')[0];
                 key = key.toLowerCase();
 
-                if ((fields[i] === 'email' || fields[i] === 'new_email') && key === 'pattern') {
-                    key = `${key}_${fields[i]}`;
+                switch (firstFieldName) {
+                    case 'email':
+                    case 'new_email':
+                    case 'phones':
+                        if (key === 'pattern') key = `${key}_${firstFieldName}`;
+                        break;
                 }
 
                 return errForms[key] ? errForms[key] : errForms['default']
@@ -54,13 +59,31 @@ export abstract class FormAbstract {
         let _errors: Object[] = JSON.parse( errors['_body'] );
 
         _errors.forEach((err) => {
-            let field: string = err['field'];
+            let fieldName: string = err['field'];
+            let opt = { [ err['type'] ]: err['message'] };
 
-            if ( options.isFormSubgroups && /password|pwd/gi.test(field) ) field = `${PREFIX_PASSWORD_GROUP}.${field}`;
+            switch (fieldName) {
+                case 'password':
+                case 'new_password':
+                case 'confirm_password':
+                    fieldName = `${PREFIX_PASSWORD_GROUP}.${fieldName}`;
+                    break;
+            }
 
-            (<FormControl>this._getFormGroup().get(field)).setErrors({
-                [ err['type'] ]: err['message']
-            });
+            let field = this._getFormGroup().get(fieldName);
+
+            if (field instanceof FormArray) {
+                if (err['reason'] && err['reason']['invalidValues']) {
+                    let indexes = err['reason']['invalidValues'].map( (item: any) => item.index );
+                    indexes.forEach( (i: number) => ( <FormControl>( <FormArray>field ).at(i) ).setErrors(opt) );
+                } else {
+                    ( <FormArray>field ).controls.forEach( (item) => ( <FormControl>item ).setErrors(opt) );
+                }
+
+                return;
+            }
+
+            ( <FormControl>field ).setErrors(opt);
         });
     }
 

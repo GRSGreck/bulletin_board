@@ -4,9 +4,11 @@ let errors = {
     "forms": {
         "required": "Поле обязательное к заполнению",
         "pattern_email": "Неверный email. Email адресс должен быть в формате «myemail@gmail.com»",
-        "pattern_phone": "Неверный номер телефона",
+        "pattern_new_email": "Неверный новый email. Email адресс должен быть в формате «myemail@gmail.com»",
+        "pattern_phones": "Неверный номер телефона",
         "minlength": "Введено слишком мало символов",
         "maxlength": "Привышен лимит символов",
+        "maxlength_phones_numbers": "Превышено максимально допустимое количество  номеров телефонов",
         "password": "Введен неверный пароль",
         "incorrect_password": "Введен неверный пароль",
         "wrong_password": "Введен неверный пароль",

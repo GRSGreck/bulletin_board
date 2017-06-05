@@ -2,6 +2,7 @@
 
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const logger = require('../libs/logger')(module);
 
 const UserSchema = new mongoose.Schema({
     _id: {
@@ -9,27 +10,25 @@ const UserSchema = new mongoose.Schema({
         min: 1,
         required: [true, 'Field "{PATH}" is required']
     },
-    phone: {
-        type: String,
-        default: '',
+    phones: {
+        type: [String],
+        default: [],
         validate: {
-            validator: function(value) {
-                if (!value) return true;
-                return !value && /^(\+\d{2})?\d{10}$/.test(value);
-            },
-            message: '{VALUE} is invalid phone number (valid phone' +
-            'number should be in a "+380991256085" or "0991256085" this format)',
-            type: 'pattern_phone'
+            validator: (phones) => !(phones.length > 3),
+            message: 'Maximum number of phone numbers exceeded)',
+            type: 'maxlength_phones_numbers'
         }
     },
     firstName: {
         type: String,
+        required: true,
         minlength: [3, 'The value of field "{PATH}" ("{VALUE}") is shorter than the minimum allowed length ({MINLENGTH}).'],
         maxlength: [30, 'The value of field "{PATH}" ("{VALUE}") exceeds the maximum allowed length ({MAXLENGTH}).'],
         default: 'mr.'
     },
     lastName: {
         type: String,
+        required: true,
         minlength: [3, 'The value of field "{PATH}" ("{VALUE}") is shorter than the minimum allowed length ({MINLENGTH}).'],
         maxlength: [30, 'The value of field "{PATH}" ("{VALUE}") exceeds the maximum allowed length ({MAXLENGTH}).'],
         default: 'Incognito'

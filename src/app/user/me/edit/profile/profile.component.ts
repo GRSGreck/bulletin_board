@@ -1,12 +1,10 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
-import {Router} from "@angular/router";
-import {FormGroup, FormControl, Validators, FormBuilder} from '@angular/forms';
-import {NgbModal, ModalDismissReasons, NgbModalRef} from '@ng-bootstrap/ng-bootstrap';
+import {FormGroup, FormControl, FormArray, Validators, FormBuilder} from '@angular/forms';
 
 import {UserService} from "../../../user.service";
 import {User} from "../../../shared/user.model";
 import {FormAbstract} from "../../../shared/form.abstract";
-import {NgbdModalContent} from "../../../modal/modal.content";
+import {NUMBER_TELEPHONE_NUMBERS} from '../../../../core/constants';
 import * as _ from 'lodash';
 
 @Component({
@@ -23,9 +21,7 @@ export class ProfileComponent extends FormAbstract implements OnInit, OnDestroy{
 
     constructor(
         private fb: FormBuilder,
-        private userService: UserService,
-        private modalService: NgbModal,
-        private router: Router
+        private userService: UserService
     ) {
         super();
     }
@@ -34,8 +30,9 @@ export class ProfileComponent extends FormAbstract implements OnInit, OnDestroy{
         this.currentUser = this.userService.getCurrentUser();
 
         this.formProfile = this.fb.group({
-            name: [this.currentUser['name'], [ Validators.required, Validators.minLength(3), Validators.maxLength(30) ]],
-            phone: [this.currentUser['phone'], Validators.pattern(/^(\+\d{2})?\d{10}$/)]
+            firstName: [this.currentUser['firstName'], [ Validators.required, Validators.minLength(3), Validators.maxLength(30) ]],
+            lastName: [this.currentUser['lastName'], [ Validators.required, Validators.minLength(3), Validators.maxLength(30) ]],
+            phones: this.fb.array( this.getCurrentPhones(this.currentUser) )
         });
 
         this.setFormGroup(this.formProfile);
@@ -49,10 +46,47 @@ export class ProfileComponent extends FormAbstract implements OnInit, OnDestroy{
         this._subscription.unsubscribe();
     }
 
+    private getCurrentPhones(user: User): [string, Validators[]][] {
+        if ( !user['phones'].length ) return [ ['+380', [Validators.pattern(/^(\+\d{2})?\d{10}$/)]] ];
+        return user['phones'].map((phone: string) => [phone, [Validators.pattern(/^(\+\d{2})?\d{10}$/)]]);
+    }
+
+    getPhones(): FormArray {
+        return <FormArray>this.formProfile.get('phones');
+    }
+
+    public addPhone(event: MouseEvent) {
+        event.preventDefault();
+
+        if (this.getPhones().length < NUMBER_TELEPHONE_NUMBERS) {
+            this.getPhones().push( new FormControl('+380', Validators.pattern(/^(\+\d{2})?\d{10}$/)) );
+        }
+    }
+
+    public removePhone(event: MouseEvent): void {
+        event.preventDefault();
+
+        // Always delete the last one item
+        if (!this.isLastPhone()) {
+            this.getPhones().removeAt(this.getPhones().length - 1);
+        } else {
+            this.getPhones().get('0').setValue('+380');
+        }
+    }
+
+    public isMaxNumberPhones(): boolean {
+        return this.getPhones().length >= NUMBER_TELEPHONE_NUMBERS;
+    }
+
+    public isLastPhone(): boolean {
+        return this.getPhones().length === 1;
+    }
+
     public getIsOldValue(): boolean {
         return this._isOldValue;
     }
 
+    //TODO: разобраться
     public setIsOldValue(value: boolean): void {
         this._isOldValue = value;
     }
@@ -64,28 +98,23 @@ export class ProfileComponent extends FormAbstract implements OnInit, OnDestroy{
     }
 
     public onSubmit(): void {
-        let user: User = this.formProfile.value;
+        let fields = this.formProfile.value;
 
-        this.userService.editProfile(user)
+        this.markAsTouchedAllFields(this.formProfile);
+        this.setSuccessMessage(false);
+        this.setIsSending(true);
+
+        this.userService.editProfile(fields)
             .subscribe(
                 (res) => {
-                    this.setIsOldValue(true);
+                    // this.setIsOldValue(true);
                     this.setSuccessMessage(true);
+                    this.setIsSending(false);
                 },
                 err => {
-                    this.getErrors(err);
+                    this.getErrors(err, { isFormSubgroups: true });
+                    this.setIsSending(false);
                 }
-                // err => {
-                //     let modalRef = this.open(NgbdModalContent);
-                //     modalRef.componentInstance.invalidErrors = this.getErrors(err);
-                // }
             );
-    }
-
-    private open(content: any): NgbModalRef {
-        let modalRef = this.modalService.open(content);
-        modalRef.componentInstance.modalTitle = 'Регистрация';
-
-        return modalRef;
     }
 }

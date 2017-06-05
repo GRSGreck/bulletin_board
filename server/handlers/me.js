@@ -20,14 +20,33 @@ module.exports = function Me() {
     };
 
     this.updateProfile = function (req, res, next) {
-        let {name = '', phone = ''} = req.body;
+        let {firstName = '', lastName = '', phones = []} = req.body;
 
-        if (name) name = name.trim();
-        if (phone) phone = phone.trim();
+        if (firstName) firstName = firstName.trim();
+        if (lastName) lastName = lastName.trim();
 
-        let profile = _.pickBy({name, phone}, (value) => !!value);
+        phones = _.compact(phones);
 
-        UserModel.findByIdAndUpdate(req.user._id, profile, {
+        if (phones.length) {
+            phones = phones.slice(0, process.env.NUMBER_TELEPHONE_NUMBERS);
+            phones = phones.map((phone) => phone.toString().trim());
+            
+            let invalidPhones = [];
+
+            for (let i = 0; i < phones.length; i++) {
+                if ( !/^(\+\d{2})?\d{10}$/.test(phones[i]) ) invalidPhones.push({ phone: phones[i], index: i });
+            }
+
+            if (invalidPhones.length) {
+                let _invalidPhones = invalidPhones.map((invalidPhone) => invalidPhone.phone).join(', ');
+                let message = `"${ _invalidPhones }" is invalid phone number (valid phone number should be in a "+380991256085" or "0991256085" this format)`;
+                return next( new errors.HttpError(400, message, 'phones', 'pattern_phones', { invalidValues: invalidPhones }) );
+            }
+        }
+
+        let data = {firstName, lastName, phones};
+
+        UserModel.findByIdAndUpdate(req.user._id, data, {
             runValidators: true,
             new: true,
             fields: {
@@ -125,8 +144,6 @@ module.exports = function Me() {
         let pwds = { currentPwd, newPwd, confirmPwd };
 
         if (!pwds.currentPwd) return next( new errors.HttpError(422, 'Field current_password is required', 'current_password', 'required') );
-        if (!pwds.newPwd) return next( new errors.HttpError(422, 'Field new_password is required', 'new_password', 'required') );
-        if (!pwds.confirmPwd) return next( new errors.HttpError(422, 'Field confirm_password is required', 'confirm_password', 'required') );
 
         for (let key in pwds) pwds[key] = pwds[key].toString().trim();
 
@@ -139,6 +156,7 @@ module.exports = function Me() {
             if (!isMatch) {
                 return next( new errors.HttpError(422, 'Wrong current password', 'current_password', 'wrong_password') );
             }
+
             if (pwds.newPwd !== pwds.confirmPwd) {
                 return next( new errors.HttpError(422, 'Passwords do not match "new_password" and "confirm_password"', 'new_password', 'passwords_not_match'));
             }
@@ -151,6 +169,8 @@ module.exports = function Me() {
                     }
 
                     user.password = pwds.newPwd;
+                    user.confirm_password = pwds.confirmPwd;
+
                     user.save(function (err, user) {
                         if (err) {
                             err.status = 422;

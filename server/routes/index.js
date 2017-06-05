@@ -58,19 +58,20 @@ module.exports = function(app) {
 
         if (err.name && err.name === 'ValidationError') {
 
-                for (let field in err.errors) {
+            for (let field in err.errors) {
 
-                    if (err.errors.hasOwnProperty(field)) {
-                        let error = {
-                            field: field,
-                            message: err.errors[field].message,
-                            type: err.errors[field].kind,
-                            stack: err.stack
-                        };
+                if (err.errors.hasOwnProperty(field)) {
+                    let error = {
+                        field: field,
+                        message: err.errors[field].message,
+                        type: err.errors[field].kind,
+                        stack: err.stack
+                    };
 
-                        resultArrErrors.push( isDevelopment ? error : _.omit(error, 'stack'));
-                    }
+                    resultArrErrors.push( isDevelopment ? error : _.omit(error, 'stack'));
                 }
+            }
+
         } else {
             let error = {
                 field: err.field || '',
@@ -78,6 +79,8 @@ module.exports = function(app) {
                 type: err.type || 'other',
                 stack: err.stack
             };
+
+            if (err.reason) error['reason'] = err.reason;
 
             if (err instanceof errors.HttpError) {
                 resultArrErrors.push( isDevelopment ? error : _.omit(error, 'stack'));

@@ -48,13 +48,21 @@ export class ChangeEmailComponent extends FormAbstract implements OnInit {
     public onSubmit(): void {
         let fields: User = this.formEmail.value;
 
+        this.markAsTouchedAllFields(this.formEmail);
+        this.setSuccessMessage(false);
+        this.setIsSending(true);
+
         this.userService.changeEmail(fields)
             .subscribe(
                 res => {
                     this.setSuccessMessage(true);
                     this.formEmail.reset();
+                    this.setIsSending(false);
                 },
-                err => this.getErrors(err)
+                err => {
+                    this.getErrors(err);
+                    this.setIsSending(false);
+                }
             );
     }
 }

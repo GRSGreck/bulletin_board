@@ -39,7 +39,8 @@ module.exports = function () {
             },
 
             function (changeEmailModel, cb) {
-                let { uid, newEmail, oldEmail } = changeEmailModel;
+                let { uid, new_email: newEmail, old_email: oldEmail } = changeEmailModel;
+
                 UserModel.findByIdAndUpdate(uid, { $set: { email: newEmail } }, {
                     runValidators: true,
                     new: true
